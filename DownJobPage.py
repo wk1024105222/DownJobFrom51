@@ -8,9 +8,8 @@ import urllib2
 import cookielib
 import logging
 import datetime
+from Job51Util import Job51Util
 
-#从页面获取职位url的正则
-jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
 #文件保存路径
 base = 'd:/fileloc/job'
 #任务队列
@@ -25,7 +24,9 @@ logging.basicConfig(level=logging.INFO,
                 filemode='a')
 
 class DownJobPage(threading.Thread):
-    ''' 从51job下载 职位包含java 的job 每个job以html保存本地'''
+    """
+    从51job下载 职位包含java 的job 每个job以html保存本地
+    """
     def run(self):
         cookie = cookielib.CookieJar()
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
@@ -56,14 +57,14 @@ class DownJobPage(threading.Thread):
             try:
                 jobsHtml = opener.open(url).read()
 
-                jobs = re.findall(jobUrlReg,jobsHtml)
+                jobs = re.findall(Job51Util.jobUrlReg,jobsHtml)
                 count=0
                 for jobUrl in jobs:
                     try:
                         shortname = jobUrl[-13:]
                         if shortname in done:
                             continue
-                        filename = path+'/'+jobUrl[-13:]
+                        filename = path+'/'+shortname
 
                         urllib.urlretrieve(jobUrl,filename+".tmp")
                         os.renames(filename+".tmp",filename)
@@ -81,7 +82,6 @@ class DownJobPage(threading.Thread):
                 logging.error('page:'+str(page)+'    open failed')
                 continue
 
-
 def createDownJobTaskQueue():
     '''通过 页面访问 确定共有页数 1089 加入线程共享 队列'''
     for i in range(1875,0,-1):
@@ -92,14 +92,15 @@ def createDownJobTaskQueue():
     for b in os.listdir('D:\\fileloc\\job'):
         done[b]=1
 
-createDownJobTaskQueue()
-ths=[]
-for i in range(3):
-    t = DownJobPage()
-    t.start()
-    ths.append(t)
+if __name__=='__main__':
+    createDownJobTaskQueue()
+    ths=[]
+    for i in range(3):
+        t = DownJobPage()
+        t.start()
+        ths.append(t)
 
-for a in ths:
-    a.join()
+    for a in ths:
+        a.join()
 
 

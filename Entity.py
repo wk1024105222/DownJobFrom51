@@ -1,12 +1,6 @@
 # coding:utf-8
 
 import uuid
-import zlib
-
-# import sys
-# reload(sys)
-# sys.setdefaultencoding('utf8')
-
 
 class job51:
     '''实体类'''
@@ -23,17 +17,9 @@ class job51:
         self.language=language
         self.type=type
         self.welfare=welfare
-
         self.id=uuid.uuid1().hex
         self.code=shortname
-
-        # if len(bytes(jbDetail))>4000:
-        #     jbDetail = zlib.compress(jbDetail)
-        #     self.zipflag='1'
-        # else:
-        #     self.zipflag='0'
         self.jbDetail=jbDetail
-
 
     def createInsertSql(self):
         '''根据实体类 属性 生成 insert'''

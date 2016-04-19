@@ -12,7 +12,7 @@ import time
 import logging
 import zlib
 
-from job51 import job51
+from Entity import job51
 
 #文件保存路径
 base = 'd:/fileloc/job'

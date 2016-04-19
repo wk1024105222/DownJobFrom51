@@ -1,10 +1,7 @@
 # coding:utf-8
 from collections import Counter
-import cx_Oracle
-import datetime
 import jieba
-
-'''结巴分词 统计词频'''
+from Job51Util import Job51Util
 
 def handleAddr(addr):
     '''工作地 处理'''
@@ -17,33 +14,32 @@ def handleAddr(addr):
         rlt = addr[0:a]
     return rlt
 
-con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai1")
-cursor = con.cursor()
-cursor.execute("select lower(company_info) from job51 t where company_info is not null ")
+def cutWord(lines):
+    """
+    结巴分词 统计词频
+    :param lines: 待统计字符串列表
+    :return:统计结果 [（key,count），（key,count）......]
+    """
+    c = Counter()
+    for i, detail in enumerate(lines):
+        seg_list = list(jieba.cut(detail))
+        c.update(seg_list)
+        if i%1000 == 0:
+            print 'No.',str(i),'       finished'
+    count = sorted(c.items(), key=lambda x:x[1], reverse=True)
 
-details = cursor.fetchall()
-con.close()
+    return count
 
-c = Counter()
-print '本次任务合计,'+ str(len(details))
-i=0
-starttime = datetime.datetime.now()
-for d in details:
-    # print d[0].split('|')[0].strip().replace('？','')
-    # seg_list = list(jieba.cut(handleAddr(d[0])))
-    seg_list = list(jieba.cut(d[0]))
-    c.update(seg_list)
-    i+=1
-    if i%1000 == 0:
-        print 'No.',str(i),'       finished'
+if __name__=='__main__':
+    util = Job51Util()
+    details = util.getListFromDB("select lower(name) from job51 t where name like '%java%' ")
+    print '本次任务合计,'+ str(len(details))
+    count = cutWord([d[0] for d in details])
 
-count = sorted(c.items(), key=lambda x:x[1], reverse=True)
-endtime = datetime.datetime.now()
-print "耗时,"+str((endtime - starttime).seconds)+"s"
-for a in count:
-    b = a[0].encode('utf8')
-    if len(b)==1:
-        continue
-    print b,',',a[1]
+    for a in count:
+        b = a[0]
+        if len(b)==1:
+            continue
+        print b,',',a[1]
 
 
