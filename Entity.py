@@ -4,7 +4,7 @@ import uuid
 
 class job51:
     '''实体类'''
-    def __init__(self, shortname, name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail):
+    def __init__(self, code, name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail,job_type,key_word):
         self.name=name
         self.addr=addr
         self.salary=salary
@@ -18,8 +18,10 @@ class job51:
         self.type=type
         self.welfare=welfare
         self.id=uuid.uuid1().hex
-        self.code=shortname
+        self.code=code
         self.jbDetail=jbDetail
+        self.job_type=job_type
+        self.key_word=key_word
 
     def createInsertSql(self):
         '''根据实体类 属性 生成 insert'''

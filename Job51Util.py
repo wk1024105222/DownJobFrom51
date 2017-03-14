@@ -3,6 +3,8 @@ import logging
 import re
 from bs4 import BeautifulSoup
 import cx_Oracle
+import datetime
+from lxml import etree
 from Entity import job51
 
 logging.basicConfig(level=logging.INFO,
@@ -22,6 +24,11 @@ class Job51Util:
         :param filename: 待分析的html文件名
         :return: dict={'jobbean':jobbean, 'urls':urls}
         """
+        try:
+            code=filename.split('\\')[-1][:-5]
+        except Exception as e:
+            code=''
+
         soup = BeautifulSoup(open(filename),'lxml')
 
         # print soup.prettify()
@@ -106,16 +113,227 @@ class Job51Util:
 
         try:
             jbDetail = contentTag.find('div',{'class':'bmsg job_msg inbox'}).text.replace("'",' ')
+            job_type=''
+            key_word=''
+            print jbDetail
+            index2 = jbDetail.find(u'关键字')
+            index1 = jbDetail.find(u'职能类别：')
+            index3 = jbDetail.index(u'举报')
+            if index1>0:
+                if index2>0:
+                    job_type=jbDetail[index1:index2]
+                    if index3>0:
+                        key_word=jbDetail[index2:index3]
+                    else:
+                        key_word=jbDetail[index2]
+                    jbDetail=jbDetail[:index1]
+                else :
+                    if index3>0:
+                        job_type=jbDetail[index1:index3]
+                    else:
+                        job_type=jbDetail[index1:]
+                    jbDetail=jbDetail[:index1]
+            else:
+                if index2>0:
+                    if index3>0:
+                        key_word=jbDetail[index2:index3]
+                    else:
+                        key_word=jbDetail[index2]
+                    jbDetail=jbDetail[:index2]
+                else :
+                    if index3>0:
+                        jbDetail=jbDetail[:index3]
+                    else:
+                        pass
+
         except Exception as e:
             #logging.error(e.message+"===="+filename)
             jbDetail=''
 
-        jobBean=job51(filename[-13:],name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail)
+        jobBean=job51(code,name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail,job_type,key_word)
 
         newUrlTags=soup.find_all('a',{'class':'name'})
         urls = [x['href'] for x in newUrlTags]
         logging.info('new urls'+str(len(urls)))
         return {'jobbean':jobBean, 'urls':urls}
+
+    def getJobDetailInfoFromHtml(self, filename):
+        """
+        解析html 获取job 信息
+        :param filename: 待分析的html文件名
+        :return: dict={'jobbean':jobbean, 'urls':urls}
+        """
+        try:
+            code=filename.split('\\')[-1][:-5]
+        except Exception as e:
+            code=''
+
+        soup = BeautifulSoup(open(filename),'lxml')
+        contentTag=soup.find('div',{'class':'tCompany_main'})
+
+        try:
+            jbDetail = contentTag.find('div',{'class':'bmsg job_msg inbox'}).text.replace("'",' ')
+            job_type=''
+            key_word=''
+            print jbDetail
+            index2 = jbDetail.find(u'关键字')
+            index1 = jbDetail.find(u'职能类别：')
+            index3 = jbDetail.index(u'举报')
+            if index1>0:
+                if index2>0:
+                    job_type=jbDetail[index1:index2]
+                    if index3>0:
+                        key_word=jbDetail[index2:index3]
+                    else:
+                        key_word=jbDetail[index2]
+                    jbDetail=jbDetail[:index1]
+                else :
+                    if index3>0:
+                        job_type=jbDetail[index1:index3]
+                    else:
+                        job_type=jbDetail[index1:]
+                    jbDetail=jbDetail[:index1]
+            else:
+                if index2>0:
+                    if index3>0:
+                        key_word=jbDetail[index2:index3]
+                    else:
+                        key_word=jbDetail[index2]
+                    jbDetail=jbDetail[:index2]
+                else :
+                    if index3>0:
+                        jbDetail=jbDetail[:index3]
+                    else:
+                        pass
+
+        except Exception as e:
+            #logging.error(e.message+"===="+filename)
+            jbDetail=''
+
+
+        return {'jbDetail':jbDetail,'job_type':job_type,'key_word':key_word}
+
+    def getJobInfoFromHtmlByXpath(self, filename):
+        try:
+            code=filename.split('\\')[-1][:-5]
+        except Exception as e:
+            code=''
+        html = open(filename).read()
+        tree = etree.HTML(html)
+
+        header = tree.xpath('//div[@class="cn"]')[0]
+
+        try:
+            name =header.xpath('h1/text()')[0]
+        except Exception as e:
+            name=''
+
+        try:
+            addr = header.xpath('span/text()')[0]
+        except Exception as e:
+            addr=''
+
+        try:
+            salary=header.xpath('strong/text()')[0]
+        except Exception as e:
+            salary=''
+
+        try:
+            company=tree.xpath('//p[@class="cname"]/a/text()')[0]
+        except Exception as e:
+            company=''
+
+        try:
+            company_info=tree.xpath('//p[@class="msg ltype"]/text()')[0]
+        except Exception as e:
+            company_info=''
+        #====================================================================================================
+        # try:
+        #     year=''
+        #     education=''
+        #     num=''
+        #     release=''
+        #     language=''
+        #     type=''
+        #     tmp1 =tree.xpath('//span[@class="sp4"]/text()')
+        #     print '|'.join(tmp1)
+        #     for m in tmp1:
+        #         if m.find(u'经验')!=-1:
+        #             year= m
+        #         elif m.find(u'招聘')!=-1:
+        #             num=m
+        #         elif  m.find(u'发布')!=-1:
+        #             release=m
+        #         else:
+        #             education=m
+        #     tmp2 =tree.xpath('//span[@class="sp2"]/text()')
+        #     print '|'.join(tmp2)
+        # except Exception as e:
+        #     type=''
+
+        try:
+            year = tree.xpath('//em[@class="i1"]/../text()')[0]
+        except Exception as e:
+            year=''
+        try:
+            education = tree.xpath('//em[@class="i2"]/../text()')[0]
+        except Exception as e:
+            education=''
+        try:
+            num = tree.xpath('//em[@class="i3"]/../text()')[0]
+        except Exception as e:
+            num=''
+        try:
+            release = tree.xpath('//em[@class="i4"]/../text()')[0]
+        except Exception as e:
+            release=''
+        try:
+            language = tree.xpath('//em[@class="i5"]/../text()')[0]
+        except Exception as e:
+            language=''
+        try:
+            type=tree.xpath('//em[@class="i6"]/../text()')[0]
+        except Exception as e:
+            type=''
+
+        #====================================================================================================
+        try:
+            welfare='|'.join([x for x in tree.xpath('//p[@class="t2"]/span/text()')])
+        except Exception as e:
+            welfare=''
+
+        try:
+            jbDetail = '\n'.join([b for b in tree.xpath('//div[@class="bmsg job_msg inbox"]/p/text()')])
+        except Exception as e:
+            jbDetail=''
+
+        try:
+            job_type='|'.join([a for a in tree.xpath('//p[@class="fp f2"][1]/span[@class="el"]/text()')])
+        except Exception as e:
+            job_type=''
+
+        try:
+            key_word='|'.join([c for c in tree.xpath('//p[@class="fp f2"][2]/span[@class="el"]/text()')])
+        except Exception as e:
+            key_word=''
+
+        job={}
+        job['name']=name
+        job['addr']=addr
+        job['salary']=salary
+        job['company']=company
+        job['company_info']=company_info
+        job['year']=year
+        job['education']=education
+        job['num']=num
+        job['release']=release
+        job['language']=language
+        job['type']=type
+        job['welfare']=welfare
+        job['jbDetail']=jbDetail
+        job['job_type']=job_type
+        job['key_word']=key_word
+        return job
 
     def getListFromDB(self, sql):
         con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai1")
@@ -145,3 +363,14 @@ class Job51Util:
 
 
 # Job51Util().getJobInfoFromHtml('D:\\fileloc\\job\\35084712.html')
+if __name__ == '__main__':
+    # starttime = datetime.datetime.now()
+    # for i in range(100):
+    #     # aaa()
+    #     a = Job51Util()
+    #     a.getJobInfoFromHtml('D:\\fileloc\\jobname_key_java\\17664435.html')
+    #     print str(i)
+    # endtime = datetime.datetime.now()
+    # print str((endtime - starttime).seconds)+"s"
+    a = Job51Util()
+    a.getJobInfoFromHtml('D:\\fileloc\\job\\71084932.html')
