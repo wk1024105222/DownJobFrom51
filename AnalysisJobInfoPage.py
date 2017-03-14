@@ -1,9 +1,7 @@
 # coding:utf-8
-
-import threading
 import logging
 import Job51Util
-import Job51TaskQueues
+import MyThread
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [line:%(lineno)d] [%(threadName)s] %(levelname)s %(message)s',
@@ -11,13 +9,13 @@ logging.basicConfig(level=logging.INFO,
                 filename='log/DownJobPage.log',
                 filemode='a')
 
-class AnalysisJobInfoPage(threading.Thread):
+class AnalysisJobInfoPage(MyThread):
     def run(self):
-        while not Job51TaskQueues.jobInfoPageQueue.empty():
-            jobInfoPageFile = Job51TaskQueues.jobInfoPageQueue.get()
+        while not self.inQueue.empty():
+            jobInfoPageFile = self.inQueue.get()
 
             jobBean = Job51Util.getJobInfoFromHtml(jobInfoPageFile)['jobbean']
-            Job51TaskQueues.jobInfoBeanQueue.put(jobBean)
+            self.outQueue.put(jobBean)
 
             logging.info(jobBean.code+ 'Analysis finished filepath:'+jobInfoPageFile)
 

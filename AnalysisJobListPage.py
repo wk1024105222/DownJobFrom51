@@ -1,21 +1,14 @@
 # coding:utf-8
 from Queue import Queue
-import os
 import re
-import threading
-import urllib
-import urllib2
-import cookielib
 import logging
-import datetime
-import time
 import Job51Util
-import Job51TaskQueues
+import MyThread
 
-class AnalysisJobListPage(threading.Thread):
+class AnalysisJobListPage(MyThread):
     def run(self):
-        while not Job51TaskQueues.jobListPageQueue.empty():
-            jobListPageFile = Job51TaskQueues.jobListPageQueue.get()
+        while not self.inQueue.empty():
+            jobListPageFile = self.inQueue.get()
 
             try:
                 jobListPageHtml = open(jobListPageFile).read()
@@ -23,7 +16,7 @@ class AnalysisJobListPage(threading.Thread):
                 jobs = re.findall(Job51Util.jobUrlReg,jobListPageHtml)
                 count=0
                 for jobUrl in jobs:
-                    Job51TaskQueues.jobInfoPageUrlQueue.put(jobUrl)
+                    self.outQueue.put(jobUrl)
                     count+=1
 
                 logging.info(jobListPageFile+ '    Analysis finished getJobInfo:'+str(count))

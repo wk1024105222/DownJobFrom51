@@ -6,13 +6,19 @@ from Queue import Queue
 jobListPageSize=100
 
 #d第一步 使用查询结果页数填充 队列
-jobListPageUrlQueue = Queue()
+# jobListPageUrlQueue = Queue()
 #第二部 下载每页查询结果
-jobListPageQueue = Queue()
+# jobListPageQueue = Queue()
 #第三部 解析每页查询结果 获取职位 URL
-jobInfoPageUrlQueue = Queue()
+# jobInfoPageUrlQueue = Queue()
 #第四步 下载职位信息页面
-jobInfoPageQueue = Queue()
+# jobInfoPageQueue = Queue()
 #第五步 解析职位页面
-jobInfoBeanQueue = Queue()
+# jobInfoBeanQueue = Queue()
 #第六部 入库
+queues = {}
+tmp='123456'
+for i in range(0,5,1):
+    print tmp[i:i+2]
+    queues[tmp[i:i+2]]=Queue()
+

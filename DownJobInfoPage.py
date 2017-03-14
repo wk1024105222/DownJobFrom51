@@ -1,16 +1,11 @@
 # coding:utf-8
-from Queue import Queue
 import os
-import re
-import threading
 import urllib
 import urllib2
 import cookielib
 import logging
-import datetime
 import time
-import Job51Util
-import Job51TaskQueues
+import MyThread
 
 #文件保存路径
 jobListPath = 'd:/fileloc/jobList'
@@ -23,7 +18,7 @@ logging.basicConfig(level=logging.INFO,
                 filename='log/DownJobPage.log',
                 filemode='a')
 
-class DownJobInfoPage(threading.Thread):
+class DownJobInfoPage(MyThread):
     """
     从51job下载 职位包含java 的job 每个job以html保存本地
     """
@@ -50,8 +45,8 @@ class DownJobInfoPage(threading.Thread):
         )
 
         tmp =opener.open(req)
-        while not Job51TaskQueues.jobInfoPageUrlQueue.empty():
-            url = Job51TaskQueues.jobInfoPageUrlQueue.get()
+        while not self.inQueue.empty():
+            url = self.inQueue.get()
 
             try:
                 shortname = url[-13:]
@@ -59,7 +54,7 @@ class DownJobInfoPage(threading.Thread):
 
                 urllib.urlretrieve(url,filename+".tmp")
                 os.renames(filename+".tmp",filename)
-                Job51TaskQueues.jobInfoPageQueue.put(filename)
+                self.outQueue.put(filename)
             except Exception as e:
                 logging.error(e)
                 logging.error('jobInfoPage:'+url+'     down failed')
