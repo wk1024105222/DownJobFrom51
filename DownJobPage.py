@@ -8,6 +8,7 @@ import urllib2
 import cookielib
 import logging
 import datetime
+import time
 from Job51Util import Job51Util
 
 #文件保存路径
@@ -33,16 +34,25 @@ class DownJobPage(threading.Thread):
 
         #需要POST的数据#
         postdata=urllib.urlencode({
-                'keywordtype'   :0,
-                'jobarea'        : 030200,
-                'stype'          :1,
-                'keyword'        :'java',
-                'image.x'        :43,
-                'image.y'        :	18,
+                # 'keywordtype'   :0,
+                # 'jobarea'        : 030200,
+                # 'stype'          :1,
+                # 'keyword'        :'java',
+                # 'image.x'        :43,
+                # 'image.y'        :	18,
+                #2017-03-12 update by wkai
+                'lang':'c',
+                'stype':2,
+                'postchannel':'0000',
+                'fromType':1,
+                'confirmdate':9,
+                'keywordtype':2,
+                'keyword':'Java'
         })
 
         req = urllib2.Request(
-            url = 'http://search.51job.com/jobsearch/search.html?fromJs=1',
+            # url = 'http://search.51job.com/jobsearch/search.html?fromJs=1',
+            url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&keyword=Java&keywordtype=2&lang=c&stype=2&postchannel=0000&fromType=1&confirmdate=9',
             data = postdata
         )
 
@@ -51,7 +61,8 @@ class DownJobPage(threading.Thread):
         while not queue.empty():
             page = queue.get()
             # url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=000000%2C00&district=000000&funtype=0000&industrytype=00&issuedate=9&providesalary=99&keyword=java&keywordtype=0&curr_page='+str(page)+'&lang=c&stype=2&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&fromType=14&dibiaoid=0&confirmdate=9'
-            url = 'http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=000000%2C00&district=000000&funtype=0000&industrytype=00&issuedate=9&providesalary=99&keyword=%E8%BD%AF%E4%BB%B6&keywordtype=0&curr_page='+str(page)+'&lang=c&stype=2&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&fromType=14&dibiaoid=0&confirmdate=9'
+            #url = 'http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=000000%2C00&district=000000&funtype=0000&industrytype=00&issuedate=9&providesalary=99&keyword=%E8%BD%AF%E4%BB%B6&keywordtype=0&curr_page='+str(page)+'&lang=c&stype=2&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&fromType=14&dibiaoid=0&confirmdate=9'
+            url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=030200%2C00&district=000000&funtype=0100&industrytype=00&issuedate=9&providesalary=08%2C09%2C10%2C11%2C12&keyword=Java&keywordtype=2&curr_page='+str(page)+'&lang=c&stype=1&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=04%2C05%2C06%2C07&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&dibiaoid=0&confirmdate=9'
             path = base
             starttime = datetime.datetime.now()
             try:
@@ -74,6 +85,7 @@ class DownJobPage(threading.Thread):
                         logging.error(e)
                         logging.error(jobUrl+'     down failed')
                         continue
+                    time.sleep(5)
                 endtime = datetime.datetime.now()
                 logging.info('page:'+str(page)+'    finished down:'+str(count)+'    costtime:'+str((endtime - starttime).seconds)+"s")
 
@@ -84,18 +96,16 @@ class DownJobPage(threading.Thread):
 
 def createDownJobTaskQueue():
     '''通过 页面访问 确定共有页数 1089 加入线程共享 队列'''
-    for i in range(1875,0,-1):
+    for i in range(6,0,-1):
         queue.put(str(i))
 
-    for a in os.listdir('D:\\fileloc\\jobname_key_java'):
-        done[a]=1
     for b in os.listdir('D:\\fileloc\\job'):
         done[b]=1
 
 if __name__=='__main__':
     createDownJobTaskQueue()
     ths=[]
-    for i in range(3):
+    for i in range(6):
         t = DownJobPage()
         t.start()
         ths.append(t)

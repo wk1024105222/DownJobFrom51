@@ -16,7 +16,9 @@ logging.basicConfig(level=logging.INFO,
 class Job51Util:
 
     #从页面获取职位url的正则
-    jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
+    #jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
+    #2017-03-12 update by wkai
+    jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=01&t=0"')
 
     def getJobInfoFromHtml(self, filename):
         """
