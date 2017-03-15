@@ -8,7 +8,7 @@ from lxml import etree
 from Entity import job51
 
 logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(thread)d [line:%(lineno)d] [%(threadName)s] %(levelname)s %(message)s',
+                format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
                 filename='log/Job51Util.log',
                 filemode='a')
@@ -65,7 +65,7 @@ def getJobInfoFromHtml(filename):
         company=''
 
     try:
-        company_info=headerTag.find('p',{'class':'msg ltype'}).text
+        company_info=headerTag.find('p',{'class':'msg ltype'}).text.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' ')
     except Exception as e:
         #logging.error(e.message+"===="+filename)
         company_info=''
@@ -116,7 +116,7 @@ def getJobInfoFromHtml(filename):
         welfare=''
 
     try:
-        addr_detail=contentTag.find('div',{'class':'bmsg inbox'}).find('p',{'class':'fp'}).text
+        addr_detail=contentTag.find('div',{'class':'bmsg inbox'}).find('p',{'class':'fp'}).text.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' ')
     except Exception as e:
         #logging.error(e.message+"===="+filename)
         addr_detail=''
@@ -159,12 +159,14 @@ def getJobInfoFromHtml(filename):
     except Exception as e:
         #logging.error(e.message+"===="+filename)
         jbDetail=''
-
+    jbDetail = jbDetail.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' ')
+    job_type = job_type.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' ')
+    key_word = key_word.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' ')
     jobBean=job51(code,name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail,job_type,key_word,addr_detail)
 
     newUrlTags=soup.find_all('a',{'class':'name'})
     urls = [x['href'] for x in newUrlTags]
-    logging.info('new urls'+str(len(urls)))
+    # logging.info('new urls'+str(len(urls)))
     return {'jobbean':jobBean, 'urls':urls}
 
 def getJobDetailInfoFromHtml(filename):

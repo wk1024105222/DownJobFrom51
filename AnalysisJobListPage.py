@@ -8,19 +8,27 @@ import time
 import Job51Driver
 
 logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(thread)d [line:%(lineno)d] [%(threadName)s] %(levelname)s %(message)s',
+                format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
                 filename='log/AnalysisJobListPage.log',
                 filemode='a')
 
 class AnalysisJobListPage(MyThread.MyThread):
     def run(self):
+        emptyNum=0
         while True:
             time.sleep(self.requestWait)
             if self.inQueue.empty():
-                logging.info('AnalysisJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+                if emptyNum>10:
+                    # 连续50次 empty 退出
+                    logging.info('emptyNum > 10 thread stop')
+                    break
+                emptyNum+=1
+                # logging.info('AnalysisJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
                 continue
+            # 计数归零
+            emptyNum=0
             jobListPageFile = self.inQueue.get()
 
             try:
@@ -31,11 +39,11 @@ class AnalysisJobListPage(MyThread.MyThread):
                 for jobUrl in jobs:
                     self.outQueue.put(jobUrl)
                     count+=1
-                logging.info(jobListPageFile+ '    Analysis finished getJobInfo:'+str(count))
+                logging.info('['+jobListPageFile+ '] Analysis successed getJobInfoUrl:'+str(count))
             except Exception as e:
                 logging.error(e)
-                logging.error(jobListPageFile+'    Analysis failed')
-                continue
+                logging.error('['+jobListPageFile+'] Analysis failed')
+        return
 
     def fillInQueue(self):
         for filename in os.listdir(Job51Driver.jobListPath):

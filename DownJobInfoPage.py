@@ -9,7 +9,7 @@ import MyThread
 import Job51Driver
 
 logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(thread)d [line:%(lineno)d] [%(threadName)s] %(levelname)s %(message)s',
+                format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
                 filename='log/DownJobInfoPage.log',
                 filemode='a')
@@ -41,12 +41,20 @@ class DownJobInfoPage(MyThread.MyThread):
         )
 
         tmp =opener.open(req)
+        emptyNum=0
         while True:
             time.sleep(self.requestWait)
             if self.inQueue.empty():
-                logging.info('DownJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+                if emptyNum>10:
+                    logging.info('emptyNum > 10 thread stop')
+                    # 连续50次 empty 退出
+                    break
+                emptyNum+=1
+                # logging.info('DownJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
                 continue
+
+            emptyNum=0
             url = self.inQueue.get()
 
             try:
@@ -56,11 +64,11 @@ class DownJobInfoPage(MyThread.MyThread):
                 urllib.urlretrieve(url,filename+".tmp")
                 os.renames(filename+".tmp",filename)
                 self.outQueue.put(filename)
+                logging.info('[jobInfoPage:'+shortname+'] down success url:'+url)
             except Exception as e:
                 logging.error(e)
-                logging.error('jobInfoPage:'+url+'     down failed')
-                continue
-            logging.info('jobInfoPage:'+url+'     down ok ')
+                logging.error('[jobInfoPage:'+shortname+'] down failed url:'+url)
+        return
 
     def fillInQueue(self):
         print "None"

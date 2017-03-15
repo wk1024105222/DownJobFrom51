@@ -3,7 +3,7 @@ from Queue import Queue
 
 #class Job51TaskQueues():
 #招聘信息查询结果 页数
-jobListPageSize=1
+jobListPageSize=2000
 
 #d第一步 使用查询结果页数填充 队列
 # jobListPageUrlQueue = Queue()
