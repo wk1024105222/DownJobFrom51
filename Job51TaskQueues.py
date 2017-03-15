@@ -3,7 +3,7 @@ from Queue import Queue
 
 #class Job51TaskQueues():
 #招聘信息查询结果 页数
-jobListPageSize=100
+jobListPageSize=1
 
 #d第一步 使用查询结果页数填充 队列
 # jobListPageUrlQueue = Queue()
@@ -16,9 +16,10 @@ jobListPageSize=100
 #第五步 解析职位页面
 # jobInfoBeanQueue = Queue()
 #第六部 入库
-queues = {}
-tmp='123456'
-for i in range(0,5,1):
-    print tmp[i:i+2]
-    queues[tmp[i:i+2]]=Queue()
+class Job51TaskQueues:
+    def __init__(self):
+        self.queues = {}
+        tmp='123456'
+        for i in range(0,5,1):
+            self.queues[tmp[i:i+2]]=Queue()
 

@@ -6,18 +6,15 @@ import cookielib
 import logging
 import time
 import MyThread
-
-#文件保存路径
-jobListPath = 'd:/fileloc/jobList'
-jobInfoPath = 'd:/fileloc/jobInfo'
+import Job51Driver
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [line:%(lineno)d] [%(threadName)s] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/DownJobPage.log',
+                filename='log/DownJobInfoPage.log',
                 filemode='a')
 
-class DownJobInfoPage(MyThread):
+class DownJobInfoPage(MyThread.MyThread):
     """
     从51job下载 职位包含java 的job 每个job以html保存本地
     """
@@ -45,15 +42,16 @@ class DownJobInfoPage(MyThread):
 
         tmp =opener.open(req)
         while True:
+            time.sleep(self.requestWait)
             if self.inQueue.empty():
-                logging.info('DownJobInfoPage inQueue is empty wait for '+self.emptyWait+'s')
+                logging.info('DownJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
                 continue
             url = self.inQueue.get()
 
             try:
                 shortname = url[-13:]
-                filename = jobInfoPath+'/'+shortname
+                filename = Job51Driver.jobInfoPath+'/'+shortname
 
                 urllib.urlretrieve(url,filename+".tmp")
                 os.renames(filename+".tmp",filename)
@@ -61,8 +59,12 @@ class DownJobInfoPage(MyThread):
             except Exception as e:
                 logging.error(e)
                 logging.error('jobInfoPage:'+url+'     down failed')
+                continue
             logging.info('jobInfoPage:'+url+'     down ok ')
-            time.sleep(self.requestWait)
+
+    def fillInQueue(self):
+        print "None"
+
 
 
 

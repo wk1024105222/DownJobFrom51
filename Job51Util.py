@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO,
 #从页面获取职位url的正则
 #jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
 #2017-03-12 update by wkai
-jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=01&t=0"')
+jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=01&t=')
 
 def getJobInfoFromHtml(filename):
     """
@@ -29,11 +29,11 @@ def getJobInfoFromHtml(filename):
     urls:页面解析出其他的职位连接 可用于递归深度爬取
     """
     try:
-        code=filename.split('\\')[-1][:-5]
+        code=filename.split('/')[-1][:-5]
     except Exception as e:
         code=''
 
-    soup = BeautifulSoup(open(filename),'lxml')
+    soup = BeautifulSoup(open(filename, 'rb'),'lxml')
 
     # print soup.prettify()
 
@@ -116,10 +116,16 @@ def getJobInfoFromHtml(filename):
         welfare=''
 
     try:
+        addr_detail=contentTag.find('div',{'class':'bmsg inbox'}).find('p',{'class':'fp'}).text
+    except Exception as e:
+        #logging.error(e.message+"===="+filename)
+        addr_detail=''
+
+    try:
         jbDetail = contentTag.find('div',{'class':'bmsg job_msg inbox'}).text.replace("'",' ')
         job_type=''
         key_word=''
-        print jbDetail
+        # print jbDetail
         index2 = jbDetail.find(u'关键字')
         index1 = jbDetail.find(u'职能类别：')
         index3 = jbDetail.index(u'举报')
@@ -154,7 +160,7 @@ def getJobInfoFromHtml(filename):
         #logging.error(e.message+"===="+filename)
         jbDetail=''
 
-    jobBean=job51(code,name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail,job_type,key_word)
+    jobBean=job51(code,name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail,job_type,key_word,addr_detail)
 
     newUrlTags=soup.find_all('a',{'class':'name'})
     urls = [x['href'] for x in newUrlTags]
@@ -179,7 +185,7 @@ def getJobDetailInfoFromHtml(filename):
         jbDetail = contentTag.find('div',{'class':'bmsg job_msg inbox'}).text.replace("'",' ')
         job_type=''
         key_word=''
-        print jbDetail
+        # print jbDetail
         index2 = jbDetail.find(u'关键字')
         index1 = jbDetail.find(u'职能类别：')
         index3 = jbDetail.index(u'举报')
@@ -345,7 +351,7 @@ def getJobInfoFromHtmlByXpath(filename):
     return job
 
 def getListFromDB(sql):
-    con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai1")
+    con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai")
     cursor = con.cursor()
     cursor.execute(sql)
     try:
@@ -358,11 +364,11 @@ def getListFromDB(sql):
     return result
 
 def executDMLSql(sqls):
-    con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai1")
+    con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai")
     cursor = con.cursor()
     for sql in sqls:
         try:
-            cursor.execute(sql)
+            cursor.execute(sql.encode('gb2312','ignore'))
             con.commit()
         except Exception as e:
             logging.error(e)

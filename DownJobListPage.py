@@ -1,5 +1,4 @@
 # coding:utf-8
-from Queue import Queue
 import os
 import urllib
 import urllib2
@@ -8,17 +7,12 @@ import logging
 import time
 import Job51TaskQueues
 import MyThread
-
-#文件保存路径
-jobListPath = 'd:/fileloc/jobList'
-jobInfoPath = 'd:/fileloc/jobInfo'
-#已下载 列表
-done = {}
+import Job51Driver
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [line:%(lineno)d] [%(threadName)s] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/DownJobPage.log',
+                filename='log/DownJobListPage.log',
                 filemode='a')
 
 def createDownJobTaskQueue(outQueue):
@@ -29,7 +23,7 @@ def createDownJobTaskQueue(outQueue):
     # for b in os.listdir('D:\\fileloc\\job'):
     #     done[b]=1
 
-class DownJobListPage(MyThread):
+class DownJobListPage(MyThread.MyThread):
     """
     从51job下载 职位包含java 的job 每个job以html保存本地
     """
@@ -57,15 +51,18 @@ class DownJobListPage(MyThread):
 
         tmp =opener.open(req)
         while True:
+            time.sleep(self.requestWait)
             if self.inQueue.empty():
-                logging.info('DownJobListPage inQueue is empty wait for '+self.emptyWait+'s')
+                logging.info('DownJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
                 break
             page = self.inQueue.get()
-            url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=030200%2C00&district=000000&funtype=0100&industrytype=00&issuedate=9&providesalary=08%2C09%2C10%2C11%2C12&keyword=Java&keywordtype=2&curr_page='+str(page)+'&lang=c&stype=1&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=04%2C05%2C06%2C07&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&dibiaoid=0&confirmdate=9'
+            url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=030200%2C00&district=000000&funtype=0100&industrytype=00&issuedate=9' \
+                '&providesalary=08%2C09%2C10%2C11%2C12&keyword=Java&keywordtype=2&curr_page='+str(page)+'&lang=c&stype=1&postchannel=0000&workyear=99&cotype=99' \
+                 '&degreefrom=99&jobterm=99&companysize=04%2C05%2C06%2C07&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&dibiaoid=0&confirmdate=9'
 
             try:
-                filename = jobListPath+'/jobListPage'+page+'.html'
+                filename = Job51Driver.jobListPath+'/jobListPage'+page+'.html'
 
                 urllib.urlretrieve(url,filename+".tmp")
                 os.renames(filename+".tmp",filename)
@@ -73,8 +70,11 @@ class DownJobListPage(MyThread):
             except Exception as e:
                 logging.error(e)
                 logging.error('jobListPage'+page+'     down failed url:'+url)
+                continue
             logging.info('jobListPage'+page+'     down ok url:'+url)
-            time.sleep(self.requestWait)
+
+    def fillInQueue(self):
+        createDownJobTaskQueue(self.inQueue);
 
 if __name__=='__main__':
     createDownJobTaskQueue()

@@ -1,8 +1,9 @@
+# coding:utf-8
+from abc import abstractmethod, ABCMeta
 import threading
 
-__author__ = 'wkai'
-
 class MyThread(threading.Thread):
+    __metaclass__ = ABCMeta
     """
     从51job下载 职位包含java 的job 每个job以html保存本地
     """
@@ -20,3 +21,6 @@ class MyThread(threading.Thread):
         self.outQueue = outQueue
         self.emptyWait = emptyWait
         self.requestWait = requestWait
+
+    @abstractmethod
+    def fillInQueue(self):pass

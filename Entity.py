@@ -4,7 +4,7 @@ import uuid
 
 class job51:
     '''实体类'''
-    def __init__(self, code, name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail,job_type,key_word):
+    def __init__(self, code, name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail,job_type,key_word,addr_detail):
         self.name=name
         self.addr=addr
         self.salary=salary
@@ -22,12 +22,13 @@ class job51:
         self.jbDetail=jbDetail
         self.job_type=job_type
         self.key_word=key_word
+        self.addr_detail = addr_detail
 
     def createInsertSql(self):
         '''根据实体类 属性 生成 insert'''
-        sql = "insert into job51 (id, code, name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail) " \
-               "values ('%s', '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % \
-              (self.id,self.code,self.name,self.addr,self.salary,self.company,self.company_info,self.year,self.education,self.num,self.release,self.language,self.type,self.welfare,self.jbDetail)
+        sql = "insert into job51 (id, code, name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail, addr_detail) " \
+               "values ('%s', '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % \
+              (self.id,self.code,self.name,self.addr,self.salary,self.company,self.company_info,self.year,self.education,self.num,self.release,self.language,self.type,self.welfare,self.jbDetail,self.addr_detail)
         return sql
 
     def createUpdateSql(self):
