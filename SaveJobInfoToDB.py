@@ -14,8 +14,8 @@ class SaveJobInfoToDB(MyThread):
         sqls=[]
         while True:
             if self.inQueue.empty():
-                logging.info('save task is empty sleep 1 min')
-                time.sleep(60)
+                logging.info('SaveJobInfoToDB inQueue is empty wait for '+self.emptyWait+'s')
+                time.sleep(self.emptyWait)
 
             jobBean = self.inQueue.get()
             sqls.append( jobBean.createInsertSql())
@@ -24,3 +24,4 @@ class SaveJobInfoToDB(MyThread):
                 Job51Util.executDMLSql(sqls)
                 sqls=[]
                 count=0
+            time.sleep(self.requestWait)

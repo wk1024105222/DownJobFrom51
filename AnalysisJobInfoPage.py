@@ -2,6 +2,7 @@
 import logging
 import Job51Util
 import MyThread
+import time
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [line:%(lineno)d] [%(threadName)s] %(levelname)s %(message)s',
@@ -11,11 +12,15 @@ logging.basicConfig(level=logging.INFO,
 
 class AnalysisJobInfoPage(MyThread):
     def run(self):
-        while not self.inQueue.empty():
+        while True:
+            if self.inQueue.empty():
+                logging.info('AnalysisJobInfoPage inQueue is empty wait for '+self.emptyWait+'s')
+                time.sleep(self.emptyWait)
+                continue
             jobInfoPageFile = self.inQueue.get()
 
             jobBean = Job51Util.getJobInfoFromHtml(jobInfoPageFile)['jobbean']
             self.outQueue.put(jobBean)
 
             logging.info(jobBean.code+ 'Analysis finished filepath:'+jobInfoPageFile)
-
+            time.sleep(self.requestWait)

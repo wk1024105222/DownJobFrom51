@@ -1,13 +1,17 @@
 # coding:utf-8
-from Queue import Queue
 import re
 import logging
 import Job51Util
 import MyThread
+import time
 
 class AnalysisJobListPage(MyThread):
     def run(self):
-        while not self.inQueue.empty():
+        while True:
+            if self.inQueue.empty():
+                logging.info('AnalysisJobListPage inQueue is empty wait for '+self.emptyWait+'s')
+                time.sleep(self.emptyWait)
+                continue
             jobListPageFile = self.inQueue.get()
 
             try:
@@ -18,10 +22,9 @@ class AnalysisJobListPage(MyThread):
                 for jobUrl in jobs:
                     self.outQueue.put(jobUrl)
                     count+=1
-
                 logging.info(jobListPageFile+ '    Analysis finished getJobInfo:'+str(count))
-
             except Exception as e:
                 logging.error(e)
                 logging.error(jobListPageFile+'    Analysis failed')
                 continue
+            time.sleep(self.requestWait)
