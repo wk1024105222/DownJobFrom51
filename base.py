@@ -2,7 +2,7 @@
 from abc import abstractmethod, ABCMeta
 import threading
 
-class MyThread(threading.Thread):
+class BaseThread(threading.Thread):
     __metaclass__ = ABCMeta
     """
     从51job下载 职位包含java 的job 每个job以html保存本地

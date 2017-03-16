@@ -1,7 +1,7 @@
 # coding:utf-8
 from collections import Counter
 import jieba
-import Job51Util
+import util
 
 def handleAddr(addr):
     '''工作地 处理'''
@@ -32,7 +32,7 @@ def cutWord(lines):
 
 if __name__=='__main__':
 
-    details = Job51Util.getListFromDB("select lower(jbdetail) from job51 t where jbdetail is not null")
+    details = util.getListFromDB("select lower(jbdetail) from job51 t where jbdetail is not null")
     print '本次任务合计,'+ str(len(details))
     count = cutWord([d[0].decode('gb2312').encode('utf-8') for d in details])
 

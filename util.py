@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import cx_Oracle
 import datetime
 from lxml import etree
-from Entity import job51
+from entity import job51
 
 #从页面获取职位url的正则
 #jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
