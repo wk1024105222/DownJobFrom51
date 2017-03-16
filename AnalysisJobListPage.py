@@ -45,6 +45,9 @@ class AnalysisJobListPage(MyThread.MyThread):
                 logging.error('['+jobListPageFile+'] Analysis failed')
         return
 
-    def fillInQueue(self):
+    def fillInQueue(inQueue):
         for filename in os.listdir(Job51Driver.jobListPath):
-            self.inQueue.put(Job51Driver.jobListPath+'/'+filename)
+            inQueue.put(Job51Driver.jobListPath+'/'+filename)
+
+    def fillDoneQueue(doneQueue):
+        return

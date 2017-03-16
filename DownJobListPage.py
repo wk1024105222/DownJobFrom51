@@ -8,6 +8,7 @@ import time
 import Job51TaskQueues
 import MyThread
 import Job51Driver
+import AnalysisJobListPage
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
@@ -19,9 +20,6 @@ def createDownJobTaskQueue(outQueue):
     '''通过 页面访问 确定共有页数 1089 加入线程共享 队列'''
     for i in range(Job51TaskQueues.jobListPageSize,0,-1):
         outQueue.put(str(i))
-
-    # for b in os.listdir('D:\\fileloc\\job'):
-    #     done[b]=1
 
 class DownJobListPage(MyThread.MyThread):
     """
@@ -58,6 +56,8 @@ class DownJobListPage(MyThread.MyThread):
                 logging.info('inQueue is empty thread stop')
                 break
             page = self.inQueue.get()
+            if super(DownJobListPage, self).whetherDone('jobListPage'+str(page)):
+                continue
             # url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=030200%2C00&district=000000&funtype=0100&industrytype=00&issuedate=9' \
             #     '&providesalary=08%2C09%2C10%2C11%2C12&keyword=Java&keywordtype=2&curr_page='+str(page)+'&lang=c&stype=1&postchannel=0000&workyear=99&cotype=99' \
             #      '&degreefrom=99&jobterm=99&companysize=04%2C05%2C06%2C07&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&dibiaoid=0&confirmdate=9'
@@ -78,8 +78,12 @@ class DownJobListPage(MyThread.MyThread):
 
         return
 
-    def fillInQueue(self):
-        createDownJobTaskQueue(self.inQueue);
+    def fillInQueue(inQueue):
+        createDownJobTaskQueue(inQueue);
+
+    def fillDoneQueue(doneQueue):
+        for filename in os.listdir(Job51Driver.jobListPath):
+            doneQueue.put(filename.split('.')[0])
 
 if __name__=='__main__':
     createDownJobTaskQueue()

@@ -24,7 +24,7 @@ class SaveJobInfoToDB(MyThread.MyThread):
                     break
                 emptyNum+=1
 
-                # logging.info('SaveJobInfoToDB inQueue is empty wait for '+str(self.emptyWait)+'s')
+                logging.info('SaveJobInfoToDB inQueue is empty wait for '+str(self.emptyWait)+'s')
 
                 Job51Util.executDMLSql(sqls)
                 sqls=[]
@@ -35,6 +35,8 @@ class SaveJobInfoToDB(MyThread.MyThread):
 
             emptyNum=0
             jobBean = self.inQueue.get()
+            if super(SaveJobInfoToDB, self).whetherDone(jobBean.code):
+                continue
             sql = jobBean.createInsertSql()
             sqls.append(sql)
             count+=1
@@ -45,5 +47,12 @@ class SaveJobInfoToDB(MyThread.MyThread):
                 count=0
         return
 
-    def fillInQueue(self):
-        print "None"
+    def fillInQueue(inQueue):
+        return
+
+    def fillDoneQueue(doneQueue):
+        doneQueue.clear()
+        codes = Job51Util.getListFromDB("select distinct code from job51")
+        doneQueue.update({code[0]: 1 for code in codes})
+        logging.info('loadBeenSavedJobInfo: '+str(len(doneQueue))+' successed')
+

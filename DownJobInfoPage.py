@@ -7,6 +7,7 @@ import logging
 import time
 import MyThread
 import Job51Driver
+import AnalysisJobInfoPage
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
@@ -56,11 +57,12 @@ class DownJobInfoPage(MyThread.MyThread):
 
             emptyNum=0
             url = self.inQueue.get()
+            shortname = url[-13:]
+            if super(DownJobInfoPage, self).whetherDone(shortname[0:8]):
+                continue
+            filename = Job51Driver.jobInfoPath+'/'+shortname
 
             try:
-                shortname = url[-13:]
-                filename = Job51Driver.jobInfoPath+'/'+shortname
-
                 urllib.urlretrieve(url,filename+".tmp")
                 os.renames(filename+".tmp",filename)
                 self.outQueue.put(filename)
@@ -70,8 +72,13 @@ class DownJobInfoPage(MyThread.MyThread):
                 logging.error('[jobInfoPage:'+shortname+'] down failed url:'+url)
         return
 
-    def fillInQueue(self):
-        print "None"
+    def fillInQueue(inQueue):
+        return
+
+    def fillDoneQueue(doneQueue):
+        for filename in os.listdir(Job51Driver.jobInfoPath):
+            #不直接使用 是考虑到 有tmp结尾的成功文件
+            doneQueue.put(filename[0:8])
 
 
 

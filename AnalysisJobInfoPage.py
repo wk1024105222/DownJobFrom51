@@ -5,6 +5,7 @@ import Job51Util
 import MyThread
 import time
 import Job51Driver
+import SaveJobInfoToDB
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
@@ -28,6 +29,8 @@ class AnalysisJobInfoPage(MyThread.MyThread):
                 continue
             emptyNum=0
             jobInfoPageFile = self.inQueue.get()
+            if super(AnalysisJobInfoPage, self).whetherDone(jobInfoPageFile.split('/')[-1][0:8]):
+                continue
 
             jobBean = Job51Util.getJobInfoFromHtml(jobInfoPageFile)['jobbean']
             self.outQueue.put(jobBean)
@@ -35,7 +38,9 @@ class AnalysisJobInfoPage(MyThread.MyThread):
             logging.info('[jobInfo'+jobBean.code+ '] Analysis successed filepath:'+jobInfoPageFile)
         return
 
-
-    def fillInQueue(self):
+    def fillInQueue(inQueue):
         for filename in os.listdir(Job51Driver.jobInfoPath):
-            self.inQueue.put(Job51Driver.jobInfoPath+'/'+filename)
+            inQueue.put(Job51Driver.jobInfoPath+'/'+filename)
+
+    def fillDoneQueue(doneQueue):
+        SaveJobInfoToDB.SaveJobInfoToDB.fillDoneQueue(doneQueue)
