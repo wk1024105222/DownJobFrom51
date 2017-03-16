@@ -7,12 +7,6 @@ import MyThread
 import time
 import Job51Driver
 
-logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/AnalysisJobListPage.log',
-                filemode='a')
-
 class AnalysisJobListPage(MyThread.MyThread):
     def run(self):
         emptyNum=0
@@ -45,9 +39,11 @@ class AnalysisJobListPage(MyThread.MyThread):
                 logging.error('['+jobListPageFile+'] Analysis failed')
         return
 
+    @staticmethod
     def fillInQueue(inQueue):
         for filename in os.listdir(Job51Driver.jobListPath):
             inQueue.put(Job51Driver.jobListPath+'/'+filename)
 
+    @staticmethod
     def fillDoneQueue(doneQueue):
         return

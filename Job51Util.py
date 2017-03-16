@@ -7,14 +7,6 @@ import datetime
 from lxml import etree
 from Entity import job51
 
-logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/Job51Util.log',
-                filemode='a')
-
-
-
 #从页面获取职位url的正则
 #jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
 #2017-03-12 update by wkai
@@ -121,10 +113,11 @@ def getJobInfoFromHtml(filename):
         #logging.error(e.message+"===="+filename)
         addr_detail=''
 
+    jbDetail= ''
+    job_type=''
+    key_word=''
     try:
         jbDetail = contentTag.find('div',{'class':'bmsg job_msg inbox'}).text.replace("'",' ')
-        job_type=''
-        key_word=''
         # print jbDetail
         index2 = jbDetail.find(u'关键字')
         index1 = jbDetail.find(u'职能类别：')
@@ -159,10 +152,12 @@ def getJobInfoFromHtml(filename):
     except Exception as e:
         #logging.error(e.message+"===="+filename)
         jbDetail=''
-    jbDetail = jbDetail.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' ')
-    job_type = job_type.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' ')
-    key_word = key_word.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' ')
-    jobBean=job51(code,name, addr, salary, company, company_info, year, education, num, release, language, type, welfare, jbDetail,job_type,key_word,addr_detail)
+
+    jobBean=job51(code,name, addr, salary, company, company_info, year, education, num, release, language, type, welfare,
+                  jbDetail.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' '),
+                  job_type.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' '),
+                  key_word.replace('\r',' ').replace('\n',' ').replace('\t',' ').replace('  ',' '),
+                  addr_detail)
 
     newUrlTags=soup.find_all('a',{'class':'name'})
     urls = [x['href'] for x in newUrlTags]

@@ -13,7 +13,7 @@ import AnalysisJobListPage
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/DownJobListPage.log',
+                filename='log/aaa.log',
                 filemode='a')
 
 def createDownJobTaskQueue(outQueue):
@@ -78,9 +78,11 @@ class DownJobListPage(MyThread.MyThread):
 
         return
 
+    @staticmethod
     def fillInQueue(inQueue):
         createDownJobTaskQueue(inQueue);
 
+    @staticmethod
     def fillDoneQueue(doneQueue):
         for filename in os.listdir(Job51Driver.jobListPath):
             doneQueue.put(filename.split('.')[0])

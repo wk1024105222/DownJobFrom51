@@ -7,7 +7,7 @@ class MyThread(threading.Thread):
     """
     从51job下载 职位包含java 的job 每个job以html保存本地
     """
-    def __init__(self, inQueue, outQueue, emptyWait, requestWait, doneQueue):
+    def __init__(self, inQueue, outQueue, emptyWait, requestWait, doneMap):
         '''
         线程基类
         :param inQueue: 数据输入队列
@@ -21,17 +21,17 @@ class MyThread(threading.Thread):
         self.outQueue = outQueue
         self.emptyWait = emptyWait
         self.requestWait = requestWait
-        self.doneQueue = doneQueue
+        self.doneMap = doneMap
 
     def whetherDone(self,key):
-        return key in self.doneQueue
+        return key in self.doneMap
 
-    # 填充 数据输入队列
-    @abstractmethod
-    @staticmethod
-    def fillInQueue(inQueue):pass
-
-    # 填充已完成的队列 用于过滤 输入队列已完成的数据
-    @abstractmethod
-    @staticmethod
-    def fillDoneQueue(doneQueue):pass
+    # # 填充 数据输入队列
+    # @abstractmethod
+    # @staticmethod
+    # def fillInQueue(inQueue):pass
+    #
+    # # 填充已完成的队列 用于过滤 输入队列已完成的数据
+    # @staticmethod
+    # @abstractmethod
+    # def fillDoneQueue(doneQueue):pass

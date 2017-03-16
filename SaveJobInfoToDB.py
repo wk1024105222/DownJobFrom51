@@ -4,12 +4,6 @@ import logging
 import time
 import Job51Util
 
-logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/SaveJobInfoToDB.log',
-                filemode='a')
-
 class SaveJobInfoToDB(MyThread.MyThread):
     def run(self):
         sqls=[]
@@ -18,14 +12,13 @@ class SaveJobInfoToDB(MyThread.MyThread):
         while True:
             time.sleep(self.requestWait)
             if self.inQueue.empty():
-                if emptyNum>10:
+                if emptyNum>50:
                     # 连续50次 empty 退出
                     logging.info('emptyNum > 10 thread stop')
                     break
                 emptyNum+=1
 
-                logging.info('SaveJobInfoToDB inQueue is empty wait for '+str(self.emptyWait)+'s')
-
+                # logging.info('SaveJobInfoToDB inQueue is empty wait for '+str(self.emptyWait)+'s')
                 Job51Util.executDMLSql(sqls)
                 sqls=[]
                 count=0
@@ -50,6 +43,7 @@ class SaveJobInfoToDB(MyThread.MyThread):
     def fillInQueue(inQueue):
         return
 
+    @staticmethod
     def fillDoneQueue(doneQueue):
         doneQueue.clear()
         codes = Job51Util.getListFromDB("select distinct code from job51")

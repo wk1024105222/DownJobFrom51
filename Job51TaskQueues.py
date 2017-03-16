@@ -23,3 +23,7 @@ class Job51TaskQueues:
         for i in range(0,5,1):
             self.queues[tmp[i:i+2]]=Queue()
 
+        self.doneMaps = {}
+        for m in range(0,5,1):
+            self.doneMaps[tmp[m:m+2]]={}
+

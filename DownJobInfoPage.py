@@ -9,12 +9,6 @@ import MyThread
 import Job51Driver
 import AnalysisJobInfoPage
 
-logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/DownJobInfoPage.log',
-                filemode='a')
-
 class DownJobInfoPage(MyThread.MyThread):
     """
     从51job下载 职位包含java 的job 每个job以html保存本地
@@ -61,7 +55,9 @@ class DownJobInfoPage(MyThread.MyThread):
             if super(DownJobInfoPage, self).whetherDone(shortname[0:8]):
                 continue
             filename = Job51Driver.jobInfoPath+'/'+shortname
-
+            # if os.path.exists(filename) or os.path.exists(filename+".tmp") :
+            #     logging.info(filename + ' file exists ')
+            #     continue
             try:
                 urllib.urlretrieve(url,filename+".tmp")
                 os.renames(filename+".tmp",filename)
@@ -75,10 +71,11 @@ class DownJobInfoPage(MyThread.MyThread):
     def fillInQueue(inQueue):
         return
 
+    @staticmethod
     def fillDoneQueue(doneQueue):
         for filename in os.listdir(Job51Driver.jobInfoPath):
             #不直接使用 是考虑到 有tmp结尾的成功文件
-            doneQueue.put(filename[0:8])
+            doneQueue[(filename[0:8])]=1
 
 
 
