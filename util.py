@@ -1,4 +1,5 @@
 # coding:utf-8
+"""本模块用于 解析51job html """
 import logging
 import re
 from bs4 import BeautifulSoup
@@ -6,6 +7,7 @@ import cx_Oracle
 import datetime
 from lxml import etree
 from entity import job51
+from dbpool import pool
 
 #从页面获取职位url的正则
 #jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
@@ -349,7 +351,7 @@ def getJobInfoFromHtmlByXpath(filename):
     return job
 
 def getListFromDB(sql):
-    con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai")
+    con = pool.connection()
     cursor = con.cursor()
     cursor.execute(sql)
     try:
@@ -362,7 +364,7 @@ def getListFromDB(sql):
     return result
 
 def executDMLSql(sqls):
-    con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai")
+    con = pool.connection()
     cursor = con.cursor()
     for sql in sqls:
         try:

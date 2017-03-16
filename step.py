@@ -1,4 +1,5 @@
 # coding:utf-8
+"""本模块 包含任务过程中 涉及的所有步骤"""
 import os
 import urllib
 import urllib2
@@ -11,6 +12,7 @@ import queues
 import base
 import driver
 import util
+from dbpool import pool
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
@@ -19,7 +21,7 @@ logging.basicConfig(level=logging.INFO,
                 filemode='w')
 
 def createDownJobTaskQueue(outQueue):
-    '''通过 页面访问 确定共有页数 1089 加入线程共享 队列'''
+    '''通过 页面访问 确定总页数 加入线程共享 队列'''
     for i in range(queues.jobListPageSize,0,-1):
         outQueue.put(str(i))
 
@@ -87,6 +89,9 @@ class DownJobListPage(base.BaseThread):
             doneQueue[filename.split('.')[0]]=1
 
 class AnalysisJobListPage(base.BaseThread):
+    """
+    解析查询结果页面 获取所有招聘信息url
+    """
     def run(self):
         emptyNum=0
         while True:
@@ -197,6 +202,9 @@ class DownJobInfoPage(base.BaseThread):
             doneQueue[(filename[0:8])]=1
 
 class AnalysisJobInfoPage(base.BaseThread):
+    """
+    解析每条招聘信息的Html
+    """
     def run(self):
         emptyNum=0
         while True:
@@ -235,8 +243,11 @@ class AnalysisJobInfoPage(base.BaseThread):
         SaveJobInfoToDB.fillDoneQueue(doneQueue)
 
 class SaveJobInfoToDB(base.BaseThread):
+    """
+    数据入库
+    """
     def run(self):
-        con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai")
+        con = pool.connection()
         cursor = con.cursor()
         emptyNum=0
         while True:
