@@ -12,7 +12,7 @@ class AnalysisJobInfoPage(MyThread.MyThread):
         emptyNum=0
         while True:
             if self.inQueue.empty():
-                if emptyNum>10:
+                if emptyNum>50:
                     # 连续50次 empty 退出
                     logging.info('emptyNum > 10 thread stop')
                     break

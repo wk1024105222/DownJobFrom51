@@ -24,8 +24,9 @@ def getJobInfoFromHtml(filename):
         code=filename.split('/')[-1][:-5]
     except Exception as e:
         code=''
-
-    soup = BeautifulSoup(open(filename, 'rb'),'lxml')
+    html = open(filename).read().decode('gb2312','ignore')
+    soup = BeautifulSoup(html,'lxml')
+    # soup = BeautifulSoup(open(filename),'lxml')
 
     # print soup.prettify()
 
@@ -365,11 +366,13 @@ def executDMLSql(sqls):
     cursor = con.cursor()
     for sql in sqls:
         try:
-            cursor.execute(sql.encode('gb2312','ignore'))
+            # cursor.execute(sql.encode('gb2312','ignore'))
+            cursor.execute(sql)
             con.commit()
         except Exception as e:
             logging.error(e)
             logging.error("excute sql %s failed" % (sql))
+
             continue
     con.close()
 

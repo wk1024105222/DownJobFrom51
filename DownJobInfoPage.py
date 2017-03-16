@@ -75,10 +75,8 @@ class DownJobInfoPage(MyThread.MyThread):
     @staticmethod
     def fillDoneQueue(doneQueue):
         for filename in os.listdir(Job51Driver.jobInfoPath):
-            # 过滤异常文件
-            if not filename.endswith('.err'):
-                #不直接使用 是考虑到 有tmp结尾的成功文件
-                doneQueue[(filename[0:8])]=1
+            #不直接使用 是考虑到 有tmp结尾的成功文件
+            doneQueue[(filename[0:8])]=1
 
 
 
