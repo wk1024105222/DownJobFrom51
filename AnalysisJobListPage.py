@@ -11,7 +11,6 @@ class AnalysisJobListPage(MyThread.MyThread):
     def run(self):
         emptyNum=0
         while True:
-            time.sleep(self.requestWait)
             if self.inQueue.empty():
                 if emptyNum>10:
                     # 连续50次 empty 退出
@@ -37,6 +36,7 @@ class AnalysisJobListPage(MyThread.MyThread):
             except Exception as e:
                 logging.error(e)
                 logging.error('['+jobListPageFile+'] Analysis failed')
+            time.sleep(self.requestWait)
         return
 
     @staticmethod

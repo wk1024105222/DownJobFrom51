@@ -19,6 +19,7 @@ jobListPageSize=2000
 class Job51TaskQueues:
     def __init__(self):
         self.queues = {}
+
         tmp='123456'
         for i in range(0,5,1):
             self.queues[tmp[i:i+2]]=Queue()
@@ -26,4 +27,14 @@ class Job51TaskQueues:
         self.doneMaps = {}
         for m in range(0,5,1):
             self.doneMaps[tmp[m:m+2]]={}
+
+    def toString(self):
+        # a = [key+':'+str(self.queues[key]._qsize()) for key in self.queues.iterkeys()]
+        # return '\t'.join(a)
+        rlt = ''
+        tmp='123456'
+        for i in range(0,5,1):
+            rlt += tmp[i:i+2]+':' + str(self.queues[tmp[i:i+2]]._qsize())+'    '
+        return rlt
+
 

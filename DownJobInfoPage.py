@@ -38,7 +38,6 @@ class DownJobInfoPage(MyThread.MyThread):
         tmp =opener.open(req)
         emptyNum=0
         while True:
-            time.sleep(self.requestWait)
             if self.inQueue.empty():
                 if emptyNum>10:
                     logging.info('emptyNum > 10 thread stop')
@@ -52,9 +51,10 @@ class DownJobInfoPage(MyThread.MyThread):
             emptyNum=0
             url = self.inQueue.get()
             shortname = url[-13:]
-            if super(DownJobInfoPage, self).whetherDone(shortname[0:8]):
-                continue
             filename = Job51Driver.jobInfoPath+'/'+shortname
+            if super(DownJobInfoPage, self).whetherDone(shortname[0:8]):
+                logging.info(filename + ' file exists ')
+                continue
             # if os.path.exists(filename) or os.path.exists(filename+".tmp") :
             #     logging.info(filename + ' file exists ')
             #     continue
@@ -66,6 +66,7 @@ class DownJobInfoPage(MyThread.MyThread):
             except Exception as e:
                 logging.error(e)
                 logging.error('[jobInfoPage:'+shortname+'] down failed url:'+url)
+            time.sleep(self.requestWait)
         return
 
     def fillInQueue(inQueue):
@@ -74,8 +75,10 @@ class DownJobInfoPage(MyThread.MyThread):
     @staticmethod
     def fillDoneQueue(doneQueue):
         for filename in os.listdir(Job51Driver.jobInfoPath):
-            #不直接使用 是考虑到 有tmp结尾的成功文件
-            doneQueue[(filename[0:8])]=1
+            # 过滤异常文件
+            if not filename.endswith('.err'):
+                #不直接使用 是考虑到 有tmp结尾的成功文件
+                doneQueue[(filename[0:8])]=1
 
 
 

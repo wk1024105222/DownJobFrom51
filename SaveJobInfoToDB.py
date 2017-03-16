@@ -10,7 +10,6 @@ class SaveJobInfoToDB(MyThread.MyThread):
         count=0
         emptyNum=0
         while True:
-            time.sleep(self.requestWait)
             if self.inQueue.empty():
                 if emptyNum>50:
                     # 连续50次 empty 退出
@@ -29,6 +28,7 @@ class SaveJobInfoToDB(MyThread.MyThread):
             emptyNum=0
             jobBean = self.inQueue.get()
             if super(SaveJobInfoToDB, self).whetherDone(jobBean.code):
+                logging.info('[jobInfoCode: '+jobBean.code+'] had been saved')
                 continue
             sql = jobBean.createInsertSql()
             sqls.append(sql)
@@ -38,6 +38,7 @@ class SaveJobInfoToDB(MyThread.MyThread):
                 logging.info('SaveJobInfoToDB insert into 100 records ')
                 sqls=[]
                 count=0
+            time.sleep(self.requestWait)
         return
 
     def fillInQueue(inQueue):
