@@ -21,7 +21,7 @@ def getJobInfoFromHtml(filename):
     urls:页面解析出其他的职位连接 可用于递归深度爬取
     """
     try:
-        code=filename.split('/')[-1][:-5]
+        code=filename.split('/')[-1][0:8]
     except Exception as e:
         code=''
     html = open(filename).read().decode('gb2312','ignore')
