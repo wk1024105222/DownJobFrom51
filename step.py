@@ -15,11 +15,6 @@ import util
 from dbpool import poolOracle
 
 # timeStr = time.strftime('%Y-%m-%d_%H:%M:%S',time.localtime(time.time()))
-logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/51job.log',
-                filemode='w')
 
 def createDownJobTaskQueue(outQueue):
     '''通过 页面访问 确定总页数 加入线程共享 队列'''

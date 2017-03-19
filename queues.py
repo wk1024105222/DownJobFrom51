@@ -8,7 +8,7 @@ import logging
 
 #class Job51TaskQueues():
 #招聘信息查询结果 页数
-jobListPageSize=1
+jobListPageSize=10
 
 #d第一步 使用查询结果页数填充 队列
 # jobListPageUrlQueue = Queue()
@@ -51,14 +51,12 @@ class Job51TaskRedisQueue(BaseQueue):
         super(Job51TaskRedisQueue, self).__init__()
         self.queueName = queueName
         self.connection = redis.Redis(connection_pool=poolRedis)
-        if self.connection.exists(self.queueName):
-            self.connection.delete(self.queueName)
 
     def put(self,item):
         self.connection.rpush(self.queueName, pickle.dumps(item))
 
     def get(self):
-        logging.info('self.connection.llen(self.queueName):    '+ str(self.connection.llen(self.queueName)))
+        # logging.info('self.connection.llen(self.queueName):    '+ str(self.connection.llen(self.queueName)))
         tmp = self.connection.lpop(self.queueName)
         if tmp == None:
             return None
@@ -73,6 +71,11 @@ class Job51TaskRedisQueue(BaseQueue):
 
     def size(self):
         return self.connection.llen(self.queueName)
+
+    def clear(self):
+        if self.connection.exists(self.queueName):
+            self.connection.delete(self.queueName)
+
 
 
 class Job51TaskQueueList:
@@ -89,6 +92,10 @@ class Job51TaskQueueList:
         self.doneMaps = {}
         for m in range(0,5,1):
             self.doneMaps[tmp[m:m+2]]={}
+
+    def clearOldData(self):
+        for list in self.queues.values():
+            list.clear()
 
     def toString(self):
         rlt = ''
