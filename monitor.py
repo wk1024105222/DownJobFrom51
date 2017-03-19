@@ -4,7 +4,7 @@ import time
 import cx_Oracle
 import time
 from functools import wraps
-from dbpool import pool
+from dbpool import poolOracle
 
 class TaskRuntimeMonitor(threading.Thread):
     """
@@ -17,7 +17,7 @@ class TaskRuntimeMonitor(threading.Thread):
         self.allThreads = allThreads
 
     def run(self):
-        con = pool.connection()
+        con = poolOracle.connection()
         cursor = con.cursor()
         while True:
             liveThread = 0

@@ -12,8 +12,9 @@ import queues
 import base
 import driver
 import util
-from dbpool import pool
+from dbpool import poolOracle
 
+# timeStr = time.strftime('%Y-%m-%d_%H:%M:%S',time.localtime(time.time()))
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
@@ -247,7 +248,7 @@ class SaveJobInfoToDB(base.BaseThread):
     数据入库
     """
     def run(self):
-        con = pool.connection()
+        con = poolOracle.connection()
         cursor = con.cursor()
         emptyNum=0
         while True:

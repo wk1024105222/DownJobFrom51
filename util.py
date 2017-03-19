@@ -7,7 +7,7 @@ import cx_Oracle
 import datetime
 from lxml import etree
 from entity import job51
-from dbpool import pool
+from dbpool import poolOracle
 
 #从页面获取职位url的正则
 #jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
@@ -351,7 +351,7 @@ def getJobInfoFromHtmlByXpath(filename):
     return job
 
 def getListFromDB(sql):
-    con = pool.connection()
+    con = poolOracle.connection()
     cursor = con.cursor()
     cursor.execute(sql)
     try:
@@ -364,7 +364,7 @@ def getListFromDB(sql):
     return result
 
 def executDMLSql(sqls):
-    con = pool.connection()
+    con = poolOracle.connection()
     cursor = con.cursor()
     for sql in sqls:
         try:
