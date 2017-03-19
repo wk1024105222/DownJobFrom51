@@ -1,0 +1,103 @@
+Sun, 19 Mar 2017 15:25:25 19988 [Thread-21] step.py step run [line:119] INFO [D:/fileloc/2017-03-15_51job_java/jobList/jobListPage1.html] Analysis successed getJobInfoUrl:50
+Sun, 19 Mar 2017 15:25:25 13756 [MainThread] step.py step fillDoneQueue [line:305] INFO loadBeenSavedJobInfo: 48 successed
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/69976044.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21964 [Thread-52] step.py step run [line:260] INFO SaveJobInfoToDB inQueue is empty wait for 5s emptyNum:1
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/71271849.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/72559473.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/74823606.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/76040267.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/76337886.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/78113888.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/78472112.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/79179833.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/80605657.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/81363171.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/81442261.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/82369180.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/82584051.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/82675970.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/84696891.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/84801450.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:229] INFO [jobInfo85340323] Analysis successed filepath:D:/fileloc/2017-03-15_51job_java/jobInfo/85340323.html.tmp
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/85743078.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/85780579.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/85967767.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/86133112.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:229] INFO [jobInfo86186752] Analysis successed filepath:D:/fileloc/2017-03-15_51job_java/jobInfo/86186752.html.tmp
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/86580807.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/86936418.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/86959504.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87014944.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87076221.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87145591.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87174466.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87174932.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175130.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175274.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175284.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175397.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175516.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175617.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175644.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175968.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87176054.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87176376.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87176404.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87176504.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177569.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177841.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177869.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177956.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177995.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87178302.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 21692 [Thread-51] step.py step run [line:223] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87178633.html had been saved so also had been analysis
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/85340323.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87014944.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177995.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177956.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/79179833.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177869.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177841.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87178633.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/72559473.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87177569.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/76337886.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/85743078.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87145591.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87178302.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/80605657.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/82584051.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175617.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/86186752.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87176504.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87176376.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87174932.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87176054.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175968.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/82675970.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175644.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175516.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/69976044.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/74823606.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/84696891.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/78113888.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175397.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/82369180.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175284.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/86133112.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/71271849.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175274.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/76040267.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/78472112.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/85967767.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/81442261.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87175130.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/86580807.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87076221.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/86959504.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/81363171.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/86936418.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/85780579.html file exists 
+Sun, 19 Mar 2017 15:25:25 36716 [Thread-34] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/84801450.html file exists 
+Sun, 19 Mar 2017 15:25:25 11696 [Thread-41] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87176404.html file exists 
+Sun, 19 Mar 2017 15:25:25 36716 [Thread-34] step.py step run [line:179] INFO D:/fileloc/2017-03-15_51job_java/jobInfo/87174466.html file exists 

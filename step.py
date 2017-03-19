@@ -17,7 +17,7 @@ from dbpool import pool
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/aaa.log',
+                filename='log/51job.log',
                 filemode='w')
 
 def createDownJobTaskQueue(outQueue):
