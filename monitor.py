@@ -21,16 +21,41 @@ class TaskRuntimeMonitor(threading.Thread):
         cursor = con.cursor()
         while True:
             liveThread = 0
-            for thread in self.allThreads:
+            step6 = 0
+            step2 = 0
+            step3 = 0
+            step4 = 0
+            step5 = 0
+
+            for thread in self.allThreads['step2']:
                 if thread.isAlive():
-                    liveThread += 1
+                    step2 += 1
+                    liveThread +=1
+            for thread in self.allThreads['step3']:
+                if thread.isAlive():
+                    step3 += 1
+                    liveThread +=1
+            for thread in self.allThreads['step4']:
+                if thread.isAlive():
+                    step4 += 1
+                    liveThread +=1
+            for thread in self.allThreads['step5']:
+                if thread.isAlive():
+                    step5 += 1
+                    liveThread +=1
+
+            for thread in self.allThreads['step6']:
+                if thread.isAlive():
+                    step6 += 1
+                    liveThread +=1
+
             if liveThread == 1:
                 break
 
             cursor.execute("select  count(*) from JOB51 t")
             details = cursor.fetchall()
 
-            print "%s \t liveTheads count: %s  DB record count: %s" % (self.taskQueues.toString(),str(liveThread), str(details[0]))
+            print "%s\tliveTheads:%s\tstep2:%s\tstep3:%s\tstep4:%s\tstep5:%s\tstep6:%s\tDB record count: %s" % (self.taskQueues.toString(),str(liveThread) ,str(step2),str(step3),str(step4),str(step5),str(step6),str(details[0]))
             time.sleep(1)
         con.close()
         return
