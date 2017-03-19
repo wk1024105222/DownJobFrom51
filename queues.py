@@ -34,7 +34,7 @@ class Job51TaskQueue(BaseQueue):
         self.queue.put(item)
 
     def get(self):
-        return self.queue.get()
+        return self.queue.get(block=False)
 
     def empty(self):
         return self.queue.empty()

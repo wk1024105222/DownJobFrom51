@@ -54,12 +54,23 @@ class DownJobListPage(base.BaseThread):
 
         tmp =opener.open(req)
         while True:
-            if self.inQueue.empty():
-                # logging.info('DownJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+            # if self.inQueue.empty():
+            #     # logging.info('DownJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+            #     time.sleep(self.emptyWait)
+            #     logging.info('inQueue is empty thread stop')
+            #     break
+            # page = self.inQueue.get()
+
+            page = None
+            try:
+                page = self.inQueue.get()
+            except Exception as e:
+                logging.error(e)
+
+            if page == None:
                 time.sleep(self.emptyWait)
                 logging.info('inQueue is empty thread stop')
                 break
-            page = self.inQueue.get()
             filename = driver.jobListPath+'/jobListPage'+page+'.html'
             if super(DownJobListPage, self).whetherDone('jobListPage'+str(page)):
                 logging.info(filename + ' file exists ')
@@ -96,7 +107,26 @@ class AnalysisJobListPage(base.BaseThread):
     def run(self):
         emptyNum=0
         while True:
-            if self.inQueue.empty():
+            # if self.inQueue.empty():
+            #     if emptyNum>10:
+            #         # 连续50次 empty 退出
+            #         logging.info('emptyNum > 10 thread stop')
+            #         break
+            #     emptyNum+=1
+            #     # logging.info('AnalysisJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+            #     time.sleep(self.emptyWait)
+            #     continue
+            # # 计数归零
+            # emptyNum=0
+            # jobListPageFile = self.inQueue.get()
+
+            jobListPageFile = None
+            try:
+                jobListPageFile = self.inQueue.get()
+            except Exception as e:
+                logging.error(e)
+
+            if jobListPageFile == None:
                 if emptyNum>10:
                     # 连续50次 empty 退出
                     logging.info('emptyNum > 10 thread stop')
@@ -105,13 +135,11 @@ class AnalysisJobListPage(base.BaseThread):
                 # logging.info('AnalysisJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
                 continue
-            # 计数归零
-            emptyNum=0
-            jobListPageFile = self.inQueue.get()
+            else:
+                emptyNum=0
 
             try:
                 jobListPageHtml = open(jobListPageFile, 'rb').read()
-
                 jobs = re.findall(util.jobUrlReg,jobListPageHtml)
                 count=0
                 for jobUrl in jobs:
@@ -162,7 +190,26 @@ class DownJobInfoPage(base.BaseThread):
         tmp =opener.open(req)
         emptyNum=0
         while True:
-            if self.inQueue.empty():
+            # if self.inQueue.empty():
+            #     if emptyNum>10:
+            #         logging.info('emptyNum > 10 thread stop')
+            #         # 连续50次 empty 退出
+            #         break
+            #     emptyNum+=1
+            #     # logging.info('DownJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+            #     time.sleep(self.emptyWait)
+            #     continue
+            #
+            # emptyNum=0
+            # url = self.inQueue.get()
+
+            url = None
+            try:
+                url = self.inQueue.get()
+            except Exception as e:
+                logging.error(e)
+
+            if url == None:
                 if emptyNum>10:
                     logging.info('emptyNum > 10 thread stop')
                     # 连续50次 empty 退出
@@ -171,9 +218,9 @@ class DownJobInfoPage(base.BaseThread):
                 # logging.info('DownJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
                 continue
+            else:
+                emptyNum=0
 
-            emptyNum=0
-            url = self.inQueue.get()
             shortname = url[-13:]
             filename = driver.jobInfoPath+'/'+shortname
             if super(DownJobInfoPage, self).whetherDone(shortname[0:8]):
@@ -209,7 +256,25 @@ class AnalysisJobInfoPage(base.BaseThread):
     def run(self):
         emptyNum=0
         while True:
-            if self.inQueue.empty():
+            # if self.inQueue.empty():
+            #     if emptyNum>50:
+            #         # 连续50次 empty 退出
+            #         logging.info('emptyNum > 10 thread stop')
+            #         break
+            #     emptyNum+=1
+            #     # logging.info('AnalysisJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+            #     time.sleep(self.emptyWait)
+            #     continue
+            # emptyNum=0
+            # jobInfoPageFile = self.inQueue.get()
+
+            jobInfoPageFile = None
+            try:
+                jobInfoPageFile = self.inQueue.get()
+            except Exception as e:
+                logging.error(e)
+
+            if jobInfoPageFile == None:
                 if emptyNum>50:
                     # 连续50次 empty 退出
                     logging.info('emptyNum > 10 thread stop')
@@ -218,8 +283,9 @@ class AnalysisJobInfoPage(base.BaseThread):
                 # logging.info('AnalysisJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
                 continue
-            emptyNum=0
-            jobInfoPageFile = self.inQueue.get()
+            else:
+                emptyNum=0
+
             if super(AnalysisJobInfoPage, self).whetherDone(jobInfoPageFile.split('/')[-1][0:8]):
                 logging.info(jobInfoPageFile + ' had been saved so also had been analysis')
                 continue
@@ -252,7 +318,26 @@ class SaveJobInfoToDB(base.BaseThread):
         cursor = con.cursor()
         emptyNum=0
         while True:
-            if self.inQueue.empty():
+            # if self.inQueue.empty():
+            #     if emptyNum>50:
+            #         # 连续50次 empty 退出
+            #         logging.info('emptyNum > 10 thread stop')
+            #         break
+            #     emptyNum+=1
+            #     logging.info('SaveJobInfoToDB inQueue is empty wait for '+str(self.emptyWait)+'s emptyNum:'+str(emptyNum))
+            #     time.sleep(self.emptyWait)
+            #     continue
+            #
+            # emptyNum=0
+            # jobBean = self.inQueue.get()
+
+            jobBean = None
+            try:
+                jobBean = self.inQueue.get()
+            except Exception as e:
+                logging.error(e)
+
+            if jobBean == None:
                 if emptyNum>50:
                     # 连续50次 empty 退出
                     logging.info('emptyNum > 10 thread stop')
@@ -261,9 +346,9 @@ class SaveJobInfoToDB(base.BaseThread):
                 logging.info('SaveJobInfoToDB inQueue is empty wait for '+str(self.emptyWait)+'s emptyNum:'+str(emptyNum))
                 time.sleep(self.emptyWait)
                 continue
+            else:
+                emptyNum=0
 
-            emptyNum=0
-            jobBean = self.inQueue.get()
             if super(SaveJobInfoToDB, self).whetherDone(jobBean.code):
                 logging.info('[jobInfoCode: '+jobBean.code+'] had been saved')
                 continue
