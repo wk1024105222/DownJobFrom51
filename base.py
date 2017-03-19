@@ -3,10 +3,10 @@ from abc import abstractmethod, ABCMeta
 import threading
 
 class BaseThread(threading.Thread):
-    __metaclass__ = ABCMeta
     """
     从51job下载 职位包含java 的job 每个job以html保存本地
     """
+    __metaclass__ = ABCMeta
     def __init__(self, inQueue, outQueue, emptyWait, requestWait, doneMap):
         '''
         线程基类
@@ -35,3 +35,23 @@ class BaseThread(threading.Thread):
     # @staticmethod
     # @abstractmethod
     # def fillDoneQueue(doneQueue):pass
+
+class BaseQueue():
+    """
+    任务队列 基类  定义了4个 抽象方法
+    便于后续更换 队列实现
+    """
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def put(self,item):pass
+
+    @abstractmethod
+    def get(self):pass
+
+    @abstractmethod
+    def empty(self):pass
+
+    @abstractmethod
+    def size(self):pass
+

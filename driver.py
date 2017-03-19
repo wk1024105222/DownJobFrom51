@@ -1,5 +1,5 @@
 # coding:utf-8
-from queues import Job51TaskQueues
+from queues import Job51TaskQueueList
 from step import *
 from monitor import *
 
@@ -9,7 +9,7 @@ jobInfoPath = 'D:/fileloc/2017-03-15_51job_java/jobInfo'
 # jobInfoPath = 'v:/job'
 
 if __name__=='__main__':
-    task = queues.Job51TaskQueues()
+    task = queues.Job51TaskQueueList()
     queues = task.queues
     doneMaps = task.doneMaps
     createDownJobTaskQueue(queues['12'])
