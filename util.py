@@ -163,7 +163,12 @@ def getJobInfoFromHtml(filename):
                   addr_detail)
 
     newUrlTags=soup.find_all('a',{'class':'name'})
-    urls = [x['href'] for x in newUrlTags]
+
+    urls = []
+    try:
+        urls = [x['href'] for x in newUrlTags]
+    except Exception as e:
+        logging.error(e)
     # logging.info('new urls'+str(len(urls)))
     return {'jobbean':jobBean, 'urls':urls}
 
