@@ -8,17 +8,21 @@ logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
                 filename='log/51job.log',
-                filemode='a')
+                filemode='w')
 
 #文件保存路径
 jobListPath = 'D:/fileloc/first/jobList'
 jobInfoPath = 'D:/fileloc/first/jobInfo'
-# jobInfoPath = 'v:/job'
 
 if __name__=='__main__':
     task = queues.Job51TaskQueueList()
+    task.clearOldData()
     queues = task.queues
     doneMaps = task.doneMaps
+
+    createDownJobTaskQueue(queues['12'])
+    AnalysisJobListPage.fillInQueue(queues['23'])
+    AnalysisJobInfoPage.fillInQueue(queues['45'])
 
     allThreads={'step2':[],'step3':[],'step4':[],'step5':[],'step6':[],'monitor':[]}
 
@@ -26,22 +30,22 @@ if __name__=='__main__':
     DownJobInfoPage.fillDoneQueue(doneMaps['34'])
     AnalysisJobInfoPage.fillDoneQueue(doneMaps['45'])
 
-    for i in range(20):
+    for i in range(10):
         step2 = DownJobListPage(queues['12'],queues['23'], 0, 5,doneMaps['12'])
         step2.start()
         allThreads['step2'].append(step2)
 
-    for i in range(10):
+    for i in range(1):
         step3 = AnalysisJobListPage(queues['23'],queues['34'], 2, 0, doneMaps['23'])
         step3.start()
         allThreads['step3'].append(step3)
 
-    for i in range(20):
+    for i in range(10):
         step4 = DownJobInfoPage(queues['34'],queues['45'], 2, 3, doneMaps['34'])
         step4.start()
         allThreads['step4'].append(step4)
 
-    for m in range(5):
+    for m in range(10):
         step5 = AnalysisJobInfoPage(queues['45'],queues['56'], 5,0,doneMaps['45'])
         step5.start()
         allThreads['step5'].append(step5)

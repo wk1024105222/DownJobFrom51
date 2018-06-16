@@ -8,7 +8,7 @@ import logging
 
 #class Job51TaskQueues():
 #招聘信息查询结果 页数
-jobListPageSize=10
+jobListPageSize=1960
 
 #d第一步 使用查询结果页数填充 队列
 # jobListPageUrlQueue = Queue()
@@ -44,8 +44,8 @@ class Job51TaskQueue(BaseQueue):
 
 class Job51TaskRedisQueue(BaseQueue):
     """
-    51job 招聘信息 下载 任务队列 线程共享
-    封装 Queue实现
+    51job 招聘信息 下载 任务队列 多进程 多线程 共享
+    底层使用Redis List实现
     """
     def __init__(self, queueName):
         super(Job51TaskRedisQueue, self).__init__()
@@ -85,8 +85,8 @@ class Job51TaskQueueList:
 
         tmp='123456'
         for i in range(0,5,1):
-            # self.queues[tmp[i:i+2]]=Job51TaskQueue(Queue())
-            self.queues[tmp[i:i+2]]=Job51TaskRedisQueue('51jobQueue'+tmp[i:i+2])
+            self.queues[tmp[i:i+2]]=Job51TaskQueue(Queue())
+            # self.queues[tmp[i:i+2]]=Job51TaskRedisQueue('51jobQueue'+tmp[i:i+2])
 
         # 各个步骤 已完成 队列
         self.doneMaps = {}
@@ -95,13 +95,15 @@ class Job51TaskQueueList:
 
     def clearOldData(self):
         for list in self.queues.values():
-            list.clear()
+            list.queue.queue.clear()
 
     def toString(self):
         rlt = ''
         tmp='123456'
+        tmp1 = ['列表待下载','列表待解析','明细待下载','明细待解析','数据待入库']
+
         for i in range(0,5,1):
-            rlt += tmp[i:i+2]+':' + str(self.queues[tmp[i:i+2]].size())+'    '
+            rlt += tmp1[i]+':' + str(self.queues[tmp[i:i+2]].size())+'        '
         return rlt
 
 

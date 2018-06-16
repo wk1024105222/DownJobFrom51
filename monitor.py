@@ -55,8 +55,9 @@ class TaskRuntimeMonitor(threading.Thread):
             cursor.execute("select  count(*) from JOB51 t")
             details = cursor.fetchall()
 
-            print "%s\tliveTheads:%s\tstep2:%s\tstep3:%s\tstep4:%s\tstep5:%s\tstep6:%s\tDB record count: %s" % (self.taskQueues.toString(),str(liveThread) ,str(step2),str(step3),str(step4),str(step5),str(step6),str(details[0]))
-            time.sleep(1)
+            print "%s\tliveTheads:%s        下载列表:%s        解析列表:%s        下载明细:%s        解析明细:%s        数据入库:%s        DB record count: %s" % \
+                  (self.taskQueues.toString(),str(liveThread) ,str(step2),str(step3),str(step4),str(step5),str(step6),str(details[0]))
+            time.sleep(3)
         con.close()
         return
 
