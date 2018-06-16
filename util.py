@@ -12,7 +12,9 @@ from dbpool import poolOracle
 #从页面获取职位url的正则
 #jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
 #2017-03-12 update by wkai
-jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=01&t=')
+#jobUrlReg = re.compile(r'href="(https://jobs\.51job\.com/.*?/\d{8}\.html)\?s=01&t=')
+#2018-06-16 update by wkai https
+jobUrlReg = re.compile(r'href="(https://jobs\.51job\.com/.*?/\d{8}\.html)\?s=01&t=')
 
 def getJobInfoFromHtml(filename):
     """
