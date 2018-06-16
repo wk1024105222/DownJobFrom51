@@ -7,14 +7,14 @@ import cookielib
 import logging
 import time
 import re
-import cx_Oracle
 import queues
 import base
 import driver
 import util
 from dbpool import poolOracle
+from entity import *
 
-# timeStr = time.strftime('%Y-%m-%d_%H:%M:%S',time.localtime(time.time()))
+
 
 def createDownJobTaskQueue(outQueue):
     '''通过 页面访问 确定总页数 加入线程共享 队列'''
@@ -43,58 +43,64 @@ class DownJobListPage(base.BaseThread):
 
         req = urllib2.Request(
             #初始访问地址(全文查询 Java 跳转的地址) 2017-03-12 update by wkai
-            url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&keyword=Java&keywordtype=2&lang=c&stype=2&postchannel=0000&fromType=1&confirmdate=9',
+            url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&keyword=Java&keywordtype=2'
+                '&lang=c&stype=2&postchannel=0000&fromType=1&confirmdate=9',
             data = postdata
         )
-
         tmp =opener.open(req)
+
         while True:
-            # if self.inQueue.empty():
-            #     # logging.info('DownJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
-            #     time.sleep(self.emptyWait)
-            #     logging.info('inQueue is empty thread stop')
-            #     break
-            # page = self.inQueue.get()
+            if self.inQueue.empty():
+                logging.info('DownJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+                time.sleep(self.emptyWait)
 
             page = None
             try:
                 page = self.inQueue.get()
             except Exception as e:
                 logging.error(e)
+                continue
 
             if page == None:
+                logging.info('DownJobListPage get null from inQueue wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
-                logging.info('inQueue is empty thread stop')
-                break
-            filename = driver.jobListPath+'/jobListPage'+page+'.html'
-            if super(DownJobListPage, self).whetherDone('jobListPage'+str(page)):
-                logging.info(filename + ' file exists ')
                 continue
-            # url ='http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=000000%2C00&district=000000&funtype=0000&industrytype=00&issuedate=9' \
-            #      '&providesalary=99&keyword=Java&keywordtype=2&curr_page='+str(page)+'&lang=c&stype=1&postchannel=0000&workyear=99&cotype=99' \
-            #       '&degreefrom=99&jobterm=99&companysize=99&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&fromType=14&dibiaoid=0&confirmdate=9'
-            url = 'https://search.51job.com/list/000000,000000,0000,00,3,99,java,2,1.html?lang=c&stype=1&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&lonlat=0%2C0&radius=-1&ord_field=0&confirmdate=9&fromType=5&dibiaoid=0&address=&line=&specialarea=00&from=&welfare='
+            pagenum = page[0]
+            pageid = page[1]
+            pageurl = page[2]
+            pagelocalpath = page[3]
+
+            updatesql = "update job51listpage set downflag='1' where id = '%s'" % (pageid)
+
+            if os.path.exists(pagelocalpath):
+                self.dbQueue.put(updatesql)
+                logging.info(pagelocalpath + ' file exists ')
+                continue
 
             try:
-                urllib.urlretrieve(url,filename+".tmp")
-                os.renames(filename+".tmp",filename)
-                self.outQueue.put(filename)
-                logging.info('[jobListPage:'+page+'] down success url:'+url)
+                urllib.urlretrieve(pageurl,pagelocalpath+".tmp")
+                os.renames(pagelocalpath+".tmp",pagelocalpath)
+                self.dbQueue.put(updatesql)
+                self.outQueue.put(pagelocalpath)
+                logging.info('[%s] down success url:%s' % (pageid,pageurl))
             except Exception as e:
                 logging.error(e)
-                logging.error('[jobListPage:'+page+'] down failed url:'+url)
+                logging.error('[%s] down failed url:%s' % (pageid,pageurl))
             time.sleep(self.requestWait)
-
         return
 
     @staticmethod
     def fillInQueue(inQueue):
-        createDownJobTaskQueue(inQueue);
+        con = poolOracle.connection()
+        cursor = con.cursor()
+        cursor.execute("select num,id,url, localpath from job51listpage where downflag='0' order by num")
+        for listpage in cursor.fetchall():
+            inQueue.put(listpage)
+        con.close()
 
     @staticmethod
     def fillDoneQueue(doneQueue):
-        for filename in os.listdir(driver.jobListPath):
-            doneQueue[filename.split('.')[0]]=1
+        pass
 
 class AnalysisJobListPage(base.BaseThread):
     """
@@ -103,55 +109,61 @@ class AnalysisJobListPage(base.BaseThread):
     def run(self):
         emptyNum=0
         while True:
-            # if self.inQueue.empty():
-            #     if emptyNum>10:
-            #         # 连续50次 empty 退出
-            #         logging.info('emptyNum > 10 thread stop')
-            #         break
-            #     emptyNum+=1
-            #     # logging.info('AnalysisJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
-            #     time.sleep(self.emptyWait)
-            #     continue
-            # # 计数归零
-            # emptyNum=0
-            # jobListPageFile = self.inQueue.get()
-
-            jobListPageFile = None
-            try:
-                jobListPageFile = self.inQueue.get()
-            except Exception as e:
-                logging.error(e)
-
-            if jobListPageFile == None:
+            if self.inQueue.empty():
                 if emptyNum>10:
                     # 连续50次 empty 退出
                     logging.info('emptyNum > 10 thread stop')
                     break
-                emptyNum+=1
-                # logging.info('AnalysisJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
-                time.sleep(self.emptyWait)
-                continue
-            else:
-                emptyNum=0
+                else :
+                    emptyNum+=1
+                    logging.info('AnalysisJobListPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+                    time.sleep(self.emptyWait)
+                    continue
+            # 计数归零
+            emptyNum=0
 
+            page = None
             try:
-                jobListPageHtml = open(jobListPageFile, 'rb').read()
-                jobs = re.findall(util.jobUrlReg,jobListPageHtml)
-                count=0
-                for jobUrl in jobs:
-                    self.outQueue.put(jobUrl)
-                    count+=1
-                logging.info('['+jobListPageFile+ '] Analysis successed getJobInfoUrl:'+str(count))
+                page = self.inQueue.get()
             except Exception as e:
                 logging.error(e)
-                logging.error('['+jobListPageFile+'] Analysis failed')
-            time.sleep(self.requestWait)
+
+            if page == None:
+                logging.info('AnalysisJobListPage get null task from inQueue wait for '+str(self.emptyWait)+'s')
+                time.sleep(self.emptyWait)
+                continue
+
+            pagenum = page[0]
+            pageid = page[1]
+            pageurl = page[2]
+            pagelocalpath = page[3]
+
+            try:
+                jobListPageHtml = open(pagelocalpath, 'rb').read()
+                joburls = re.findall(util.jobUrlReg,jobListPageHtml)
+
+                # print '%s %d' % (jobListPageFile,len(jobs))
+                for jobUrl in joburls:
+                    self.outQueue.put(jobUrl)
+                    insertsql = JobInfoPage(pageid, jobUrl,'%s/%s' % (driver.jobInfoPath, jobUrl.split('/')[-1])).createInsertSql()
+                    self.dbQueue.put(insertsql)
+
+                updatesql = "update job51listpage set analyflag='1' where id = '%s'" % (pageid)
+                self.dbQueue.put(updatesql)
+                logging.info('['+pagelocalpath+ '] Analysis successed getJobInfoUrl:'+str(len(joburls)))
+            except Exception as e:
+                logging.error(e)
+                logging.error('['+pagelocalpath+'] Analysis failed')
         return
 
     @staticmethod
     def fillInQueue(inQueue):
-        for filename in os.listdir(driver.jobListPath):
-            inQueue.put(driver.jobListPath+'/'+filename)
+        con = poolOracle.connection()
+        cursor = con.cursor()
+        cursor.execute("select num,id,url, localpath from job51listpage where downflag='1' and analyflag='0' order by num")
+        for listpage in cursor.fetchall():
+             inQueue.put(listpage)
+        con.close()
 
     @staticmethod
     def fillDoneQueue(doneQueue):
@@ -179,71 +191,74 @@ class DownJobInfoPage(base.BaseThread):
 
         req = urllib2.Request(
             #初始访问地址(全文查询 Java 跳转的地址) 2017-03-12 update by wkai
-            url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&keyword=Java&keywordtype=2&lang=c&stype=2&postchannel=0000&fromType=1&confirmdate=9',
+            url='http://search.51job.com/jobsearch/search_result.php?fromJs=1&keyword=Java&keywordtype=2'
+                '&lang=c&stype=2&postchannel=0000&fromType=1&confirmdate=9',
             data = postdata
         )
 
         tmp =opener.open(req)
         emptyNum=0
         while True:
-            # if self.inQueue.empty():
-            #     if emptyNum>10:
-            #         logging.info('emptyNum > 10 thread stop')
-            #         # 连续50次 empty 退出
-            #         break
-            #     emptyNum+=1
-            #     # logging.info('DownJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
-            #     time.sleep(self.emptyWait)
-            #     continue
-            #
-            # emptyNum=0
-            # url = self.inQueue.get()
-
-            url = None
-            try:
-                url = self.inQueue.get()
-            except Exception as e:
-                logging.error(e)
-
-            if url == None:
+            if self.inQueue.empty():
                 if emptyNum>10:
                     logging.info('emptyNum > 10 thread stop')
                     # 连续50次 empty 退出
                     break
-                emptyNum+=1
-                # logging.info('DownJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
-                time.sleep(self.emptyWait)
-                continue
-            else:
-                emptyNum=0
+                else:
+                    emptyNum+=1
+                    logging.info('DownJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+                    time.sleep(self.emptyWait)
+                    continue
+            emptyNum=0
 
-            shortname = url[-13:]
-            filename = driver.jobInfoPath+'/'+shortname
-            if super(DownJobInfoPage, self).whetherDone(shortname[0:8]):
-                logging.info(filename + ' file exists ')
-                continue
-            # if os.path.exists(filename) or os.path.exists(filename+".tmp") :
-            #     logging.info(filename + ' file exists ')
-            #     continue
+            infopage = None
             try:
-                urllib.urlretrieve(url,filename+".tmp")
-                os.renames(filename+".tmp",filename)
-                self.outQueue.put(filename)
-                logging.info('[jobInfoPage:'+shortname+'] down success url:'+url)
+                infopage = self.inQueue.get()
             except Exception as e:
                 logging.error(e)
-                logging.error('[jobInfoPage:'+shortname+'] down failed url:'+url)
-            time.sleep(self.requestWait)
-        return
 
-    def fillInQueue(inQueue):
+            if infopage == None:
+                logging.info('DownJobInfoPage get null task from inQueue wait for '+str(self.emptyWait)+'s')
+                time.sleep(self.emptyWait)
+                continue
+
+            pagecode = infopage[0]
+            pageid = infopage[1]
+            pageurl = infopage[2]
+            pagelocalpath = infopage[3]
+
+            updatesql = "update job51infopage set downflag='1' where code = '%s'" % (pagecode)
+
+            if os.path.exists(pagelocalpath):
+                self.dbQueue.put(updatesql)
+                logging.info(pagelocalpath + ' file exists ')
+                continue
+
+            try:
+                urllib.urlretrieve(pageurl,pagelocalpath+".tmp")
+                os.renames(pagelocalpath+".tmp",pagelocalpath)
+                self.dbQueue.put(updatesql)
+                self.outQueue.put(pagelocalpath)
+                logging.info('[%s] down success %s:' % (pagelocalpath,pageurl))
+                # print '[jobInfoPage:'+shortname+'] down success url:'+url
+            except Exception as e:
+                logging.error(e)
+                logging.error('[%s] down failed %s:' % (pagelocalpath,pageurl))
+                print '[%s] down failed %s:' % (pagelocalpath,pageurl)
         return
 
     @staticmethod
+    def fillInQueue(inQueue):
+        con = poolOracle.connection()
+        cursor = con.cursor()
+        cursor.execute("select code,pageid,url,localpath from job51infopage where downflag='0'")
+        for infopage in cursor.fetchall():
+             inQueue.put(infopage)
+        con.close()
+
+    @staticmethod
     def fillDoneQueue(doneQueue):
-        for filename in os.listdir(driver.jobInfoPath):
-            #不直接使用 是考虑到 有tmp结尾的成功文件
-            doneQueue[(filename[0:8])]=1
+        return
 
 class AnalysisJobInfoPage(base.BaseThread):
     """
@@ -252,60 +267,63 @@ class AnalysisJobInfoPage(base.BaseThread):
     def run(self):
         emptyNum=0
         while True:
-            # if self.inQueue.empty():
-            #     if emptyNum>50:
-            #         # 连续50次 empty 退出
-            #         logging.info('emptyNum > 10 thread stop')
-            #         break
-            #     emptyNum+=1
-            #     # logging.info('AnalysisJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
-            #     time.sleep(self.emptyWait)
-            #     continue
-            # emptyNum=0
-            # jobInfoPageFile = self.inQueue.get()
-
-            jobInfoPageFile = None
-            try:
-                jobInfoPageFile = self.inQueue.get()
-            except Exception as e:
-                logging.error(e)
-
-            if jobInfoPageFile == None:
+            if self.inQueue.empty():
                 if emptyNum>50:
                     # 连续50次 empty 退出
                     logging.info('emptyNum > 10 thread stop')
                     break
-                emptyNum+=1
-                # logging.info('AnalysisJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+                else:
+                    emptyNum+=1
+                    logging.info('AnalysisJobInfoPage inQueue is empty wait for '+str(self.emptyWait)+'s')
+                    time.sleep(self.emptyWait)
+                    continue
+            emptyNum=0
+
+            infopage = None
+            try:
+                infopage = self.inQueue.get()
+            except Exception as e:
+                logging.error(e)
+
+            if infopage == None:
+                logging.info('AnalysisJobInfoPage get null task from inQueue wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
                 continue
-            else:
-                emptyNum=0
 
-            if super(AnalysisJobInfoPage, self).whetherDone(jobInfoPageFile.split('/')[-1][0:8]):
-                logging.info(jobInfoPageFile + ' had been saved so also had been analysis')
+            pagecode = infopage[0]
+            pageid = infopage[1]
+            pageurl = infopage[2]
+            pagelocalpath = infopage[3]
+
+            if not os.path.exists(pagelocalpath):
+                logging.info(pagelocalpath + ' file not exists ')
                 continue
 
-            jobBean = util.getJobInfoFromHtml(jobInfoPageFile)['jobbean']
-            self.outQueue.put(jobBean)
+            jobBean = util.getJobInfoFromHtml(pagelocalpath)['jobbean']
+            self.dbQueue.put(jobBean.createInsertSql())
 
-            logging.info('[jobInfo'+jobBean.code+ '] Analysis successed filepath:'+jobInfoPageFile)
+            updatesql = "update job51infopage set analyflag='1' where code = '%s'" % (pagecode)
+            self.dbQueue.put(updatesql)
+
+            logging.info('[jobInfo:%s] Analysis successed filepath:%s' % (pagecode,pagelocalpath))
             time.sleep(self.requestWait)
         logging.info('thread is over')
         return
 
     @staticmethod
     def fillInQueue(inQueue):
-        for filename in os.listdir(driver.jobInfoPath):
-            # 过滤异常文件
-            if not filename.endswith('.err'):
-                inQueue.put(driver.jobInfoPath+'/'+filename)
+        con = poolOracle.connection()
+        cursor = con.cursor()
+        cursor.execute("select code,pageid,url,localpath from job51infopage where downflag='1' and analyflag='0'")
+        for infopage in cursor.fetchall():
+             inQueue.put(infopage)
+        con.close()
 
     @staticmethod
     def fillDoneQueue(doneQueue):
-        SaveJobInfoToDB.fillDoneQueue(doneQueue)
+        return
 
-class SaveJobInfoToDB(base.BaseThread):
+class DBExecuter(base.BaseThread):
     """
     数据入库
     """
@@ -313,75 +331,47 @@ class SaveJobInfoToDB(base.BaseThread):
         con = poolOracle.connection()
         cursor = con.cursor()
         emptyNum=0
+        fp = open("allsql.sql","w")
         while True:
-            # if self.inQueue.empty():
-            #     if emptyNum>50:
-            #         # 连续50次 empty 退出
-            #         logging.info('emptyNum > 10 thread stop')
-            #         break
-            #     emptyNum+=1
-            #     logging.info('SaveJobInfoToDB inQueue is empty wait for '+str(self.emptyWait)+'s emptyNum:'+str(emptyNum))
-            #     time.sleep(self.emptyWait)
-            #     continue
-            #
-            # emptyNum=0
-            # jobBean = self.inQueue.get()
-
-            jobBean = None
-            try:
-                jobBean = self.inQueue.get()
-            except Exception as e:
-                logging.error(e)
-
-            if jobBean == None:
+            if self.inQueue.empty():
                 if emptyNum>50:
                     # 连续50次 empty 退出
                     logging.info('emptyNum > 10 thread stop')
                     break
-                emptyNum+=1
-                logging.info('SaveJobInfoToDB inQueue is empty wait for '+str(self.emptyWait)+'s emptyNum:'+str(emptyNum))
-                time.sleep(self.emptyWait)
-                continue
-            else:
-                emptyNum=0
+                else:
+                    emptyNum+=1
+                    logging.info('SaveJobInfoToDB inQueue is empty wait for '+str(self.emptyWait)+'s emptyNum:'+str(emptyNum))
+                    time.sleep(self.emptyWait)
+                    continue
+            emptyNum=0
 
-            if super(SaveJobInfoToDB, self).whetherDone(jobBean.code):
-                logging.info('[jobInfoCode: '+jobBean.code+'] had been saved')
-                continue
-            sql = jobBean.createInsertSql()
+            sql = None
             try:
-                cursor.execute(sql.encode('gb2312','ignore'))
-                con.commit()
-                logging.info('[jobInfoCode: '+jobBean.code+'] saved successed')
+                sql = self.inQueue.get()
             except Exception as e:
                 logging.error(e)
-                # logging.error("excute sql %s failed" % (sql))
-                filename = driver.jobInfoPath+'/'+jobBean.code+'.html'
-                filename_tmp = driver.jobInfoPath+'/'+jobBean.code+'.html.tmp'
-                try:
-                    if os.path.exists(filename):
-                        logging.error("find error file %s" % (filename))
-                        os.renames(filename,filename+".err")
-                    else:
-                        if os.path.exists(filename_tmp):
-                            logging.error("find error file %s" % (filename_tmp))
-                            os.renames(filename_tmp,filename_tmp+".err")
-                except Exception as e:
-                    logging.error(e)
-                    logging.error("error file %s rename failed " % (filename))
+
+            if sql == None:
+                logging.info('SaveJobInfoToDB get null task from inQueue wait for '+str(self.emptyWait)+'s emptyNum:'+str(emptyNum))
+                time.sleep(self.emptyWait)
                 continue
 
-            time.sleep(self.requestWait)
+            try:
+                fp.write(sql.encode('gb2312','ignore'))
+                cursor.execute(sql.encode('gb2312','ignore'))
+                print sql
+                con.commit()
+            except Exception as e:
+                logging.error(e)
         con.close()
+        fp.closed()
         logging.info('thread is over')
         return
 
+    @staticmethod
     def fillInQueue(inQueue):
         return
 
     @staticmethod
     def fillDoneQueue(doneQueue):
-        doneQueue.clear()
-        codes = util.getListFromDB("select distinct code from job51")
-        doneQueue.update({code[0]: 1 for code in codes})
-        logging.info('loadBeenSavedJobInfo: '+str(len(doneQueue))+' successed')
+        return

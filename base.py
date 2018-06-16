@@ -7,7 +7,7 @@ class BaseThread(threading.Thread):
     从51job下载 职位包含java 的job 每个job以html保存本地
     """
     __metaclass__ = ABCMeta
-    def __init__(self, inQueue, outQueue, emptyWait, requestWait, doneMap):
+    def __init__(self, inQueue, outQueue, dbQueue ,emptyWait, requestWait, doneMap):
         '''
         线程基类
         :param inQueue: 数据输入队列
@@ -19,6 +19,7 @@ class BaseThread(threading.Thread):
         threading.Thread.__init__(self)
         self.inQueue = inQueue
         self.outQueue = outQueue
+        self.dbQueue = dbQueue
         self.emptyWait = emptyWait
         self.requestWait = requestWait
         self.doneMap = doneMap

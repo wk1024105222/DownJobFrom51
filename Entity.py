@@ -36,4 +36,29 @@ class job51:
         sql = "update job51 set jbDetail ='%s'" % (self.jbDetail)
         return sql
 
+class JobListPage:
+    def __init__(self, num, id, url, localpath):
+        self.num = num
+        self.id = id
+        self.url = url
+        self.downflag = '0'
+        self.localpath = localpath
+        self.analyflag = '0'
 
+    def createInsertSql(self):
+        return "Insert into JOB51LISTPAGE (ID,URL,DOWNFLAG,LOCALPATH,ANALYFLAG, NUM) values ('%s','%s','%s','%s','%s', %s)" % \
+               (self.id,self.url,self.downflag,self.localpath,self.analyflag,self.num)
+
+class JobInfoPage:
+    def __init__(self, pageid,url,localpath):
+
+        self.code = url.split('/')[-1][0:-5]
+        self.pageid = pageid
+        self.url = url
+        self.downflag = '0'
+        self.localpath = localpath
+        self.analyflag = '0'
+
+    def createInsertSql(self):
+        return "Insert into JOB51INFOPAGE (CODE,PAGEID,URL,DOWNFLAG,LCACLPATH,ANALYFLAG) values ('%s','%s','%s','%s','%s','%s')" % \
+               (self.code,self.pageid,self.url,self.downflag,self.localpath,self.analyflag)
