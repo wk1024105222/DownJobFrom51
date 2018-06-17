@@ -60,5 +60,5 @@ class JobInfoPage:
         self.analyflag = '0'
 
     def createInsertSql(self):
-        return "Insert into JOB51INFOPAGE (CODE,PAGEID,URL,DOWNFLAG,LCACLPATH,ANALYFLAG) values ('%s','%s','%s','%s','%s','%s')" % \
+        return "Insert into JOB51INFOPAGE (CODE,PAGEID,URL,DOWNFLAG,LOCALPATH,ANALYFLAG) values ('%s','%s','%s','%s','%s','%s')" % \
                (self.code,self.pageid,self.url,self.downflag,self.localpath,self.analyflag)
