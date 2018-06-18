@@ -3,11 +3,9 @@
 import logging
 import re
 from bs4 import BeautifulSoup
-import cx_Oracle
-import datetime
 from lxml import etree
 from entity import job51
-from dbpool import poolOracle
+from crawler.dbpool import poolOracle
 
 #从页面获取职位url的正则
 #jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
@@ -25,7 +23,7 @@ def getJobInfoFromHtml(filename):
     urls:页面解析出其他的职位连接 可用于递归深度爬取
     """
     try:
-        code=filename.split('/')[-1][0:8]
+        code=filename.split('/')[-1][0:-5]
     except Exception as e:
         code=''
     html = open(filename).read().decode('gb2312','ignore')
@@ -126,7 +124,7 @@ def getJobInfoFromHtml(filename):
         # print jbDetail
         index2 = jbDetail.find(u'关键字')
         index1 = jbDetail.find(u'职能类别：')
-        index3 = jbDetail.index(u'举报')
+        index3 = jbDetail.find(u'举报')
         if index1>0:
             if index2>0:
                 job_type=jbDetail[index1:index2]
@@ -155,7 +153,8 @@ def getJobInfoFromHtml(filename):
                     pass
 
     except Exception as e:
-        #logging.error(e.message+"===="+filename)
+        print e
+        logging.error(e.message+"===="+filename)
         jbDetail=''
 
     jobBean=job51(code,name, addr, salary, company, company_info, year, education, num, release, language, type, welfare,
@@ -375,12 +374,12 @@ def executDMLSql(sqls):
     cursor = con.cursor()
     for sql in sqls:
         try:
-            # cursor.execute(sql.encode('gb2312','ignore'))
+            # cursor.execute(script.encode('gb2312','ignore'))
             cursor.execute(sql)
             con.commit()
         except Exception as e:
             logging.error(e)
-            logging.error("excute sql %s failed" % (sql))
+            logging.error("excute script %s failed" % (sql))
 
             continue
     con.close()

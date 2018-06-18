@@ -7,7 +7,7 @@ import logging
 import random
 
 logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(thread)d [%(threadName)s] %(filename)s %(module)s %(funcName)s [line:%(lineno)d] %(levelname)s %(message)s',
+                format='%(asctime)s\t%(thread)d\t[%(threadName)s]\t%(filename)s\t%(module)s\t%(funcName)s\t[line:%(lineno)d]\t%(levelname)s\t%(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
                 filename='log/51job.log',
                 filemode='w')
@@ -40,7 +40,7 @@ def createJobListPageToDB():
 
 if __name__=='__main__':
     createJobListPageToDB()
-    
+
     allThreads={'step2':[],'step3':[],'step4':[],'step5':[],'step6':[],'monitor':[]}
 
     task = queues.Job51TaskQueueList()
@@ -57,16 +57,16 @@ if __name__=='__main__':
     DownJobInfoPage.fillInQueue(queues['34'])
     AnalysisJobInfoPage.fillInQueue(queues['45'])
 
-    # DownJobListPage.fillDoneQueue(doneMaps['12'])
-    # DownJobInfoPage.fillDoneQueue(doneMaps['34'])
-    # AnalysisJobInfoPage.fillDoneQueue(doneMaps['45'])
+    DownJobListPage.fillDoneQueue(doneMaps['12'])
+    DownJobInfoPage.fillDoneQueue(doneMaps['34'])
+    AnalysisJobInfoPage.fillDoneQueue(doneMaps['45'])
 
-    for i in range(10):
+    for i in range(20):
         step2 = DownJobListPage(queues['12'],queues['23'],queues['56'], 0, 5,doneMaps['12'])
         step2.start()
         allThreads['step2'].append(step2)
 
-    for i in range(5):
+    for i in range(1):
         step3 = AnalysisJobListPage(queues['23'],queues['34'],queues['56'], 2, 0, doneMaps['23'])
         step3.start()
         allThreads['step3'].append(step3)
@@ -76,7 +76,7 @@ if __name__=='__main__':
         step4.start()
         allThreads['step4'].append(step4)
 
-    for m in range(10):
+    for m in range(20):
         step5 = AnalysisJobInfoPage(queues['45'],queues['56'],queues['56'], 5,0,doneMaps['45'])
         step5.start()
         allThreads['step5'].append(step5)
@@ -85,6 +85,7 @@ if __name__=='__main__':
         step6 = DBExecuter(queues['56'],None, None, 5,0,doneMaps['56'])
         step6.start()
         allThreads['step6'].append(step6)
+
     for a in allThreads.values():
-        for b in a:
-            b.join()
+       for b in a:
+          b.join()

@@ -32,7 +32,7 @@ def cutWord(lines):
 
 if __name__=='__main__':
 
-    details = util.getListFromDB("select lower(jbdetail) from job51 t where jbdetail is not null")
+    details = util.getListFromDB("select count(1) from job51 t where jbdetail is not null and release in ('06-17发布','06-16发布','06-15发布','06-14发布','06-13发布','06-12发布','06-11发布')")
     print '本次任务合计,'+ str(len(details))
     count = cutWord([d[0].decode('gb2312').encode('utf-8') for d in details])
 

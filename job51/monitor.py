@@ -1,10 +1,8 @@
 # coding:utf-8
 import threading
 import time
-import cx_Oracle
-import time
 from functools import wraps
-from dbpool import poolOracle
+from crawler.dbpool import poolOracle
 
 class TaskRuntimeMonitor(threading.Thread):
     """

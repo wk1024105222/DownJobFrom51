@@ -1,11 +1,11 @@
 # coding:utf-8
 from abc import abstractmethod, ABCMeta
 import threading
+import redis
+from crawler.dbpool import poolRedis
+import pickle
 
 class BaseThread(threading.Thread):
-    """
-    从51job下载 职位包含java 的job 每个job以html保存本地
-    """
     __metaclass__ = ABCMeta
     def __init__(self, inQueue, outQueue, dbQueue ,emptyWait, requestWait, doneMap):
         '''
@@ -27,16 +27,6 @@ class BaseThread(threading.Thread):
     def whetherDone(self,key):
         return key in self.doneMap
 
-    # # 填充 数据输入队列
-    # @abstractmethod
-    # @staticmethod
-    # def fillInQueue(inQueue):pass
-    #
-    # # 填充已完成的队列 用于过滤 输入队列已完成的数据
-    # @staticmethod
-    # @abstractmethod
-    # def fillDoneQueue(doneQueue):pass
-
 class BaseQueue():
     """
     任务队列 基类  定义了4个 抽象方法
@@ -55,4 +45,59 @@ class BaseQueue():
 
     @abstractmethod
     def size(self):pass
+
+class TaskQueue(BaseQueue):
+    """
+    任务队列 线程共享
+    封装 Queue实现
+    """
+    def __init__(self, queue):
+        super(TaskQueue, self).__init__()
+        self.queue = queue
+
+    def put(self,item):
+        self.queue.put(item)
+
+    def get(self):
+        return self.queue.get(block=False)
+
+    def empty(self):
+        return self.queue.empty()
+
+    def size(self):
+        return self.queue._qsize()
+
+class TaskRedisQueue(BaseQueue):
+    """
+    任务队列 多进程 多线程 共享
+    底层使用Redis List实现
+    """
+    def __init__(self, queueName):
+        super(TaskRedisQueue, self).__init__()
+        self.queueName = queueName
+        self.connection = redis.Redis(connection_pool=poolRedis)
+
+    def put(self,item):
+        self.connection.rpush(self.queueName, pickle.dumps(item))
+
+    def get(self):
+        # logging.info('self.connection.llen(self.queueName):    '+ str(self.connection.llen(self.queueName)))
+        tmp = self.connection.lpop(self.queueName)
+        if tmp == None:
+            return None
+        else:
+            return  pickle.loads(tmp)
+
+    def empty(self):
+        if not self.connection.exists(self.queueName) :
+            return True
+        else:
+            return  self.connection.llen(self.queueName) == 0
+
+    def size(self):
+        return self.connection.llen(self.queueName)
+
+    def clear(self):
+        if self.connection.exists(self.queueName):
+            self.connection.delete(self.queueName)
 

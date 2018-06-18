@@ -8,13 +8,11 @@ import logging
 import time
 import re
 import queues
-import base
+from crawler import base
 import driver
 import util
-from dbpool import poolOracle
+from crawler.dbpool import poolOracle
 from entity import *
-
-
 
 def createDownJobTaskQueue(outQueue):
     '''通过 页面访问 确定总页数 加入线程共享 队列'''
@@ -331,7 +329,7 @@ class DBExecuter(base.BaseThread):
         con = poolOracle.connection()
         cursor = con.cursor()
         emptyNum=0
-        fp = open("allsql.sql","w")
+        # fp = open("allsql.script","w")
         while True:
             if self.inQueue.empty():
                 if emptyNum>50:
@@ -356,15 +354,16 @@ class DBExecuter(base.BaseThread):
                 time.sleep(self.emptyWait)
                 continue
 
-            try:
-                fp.write(sql.encode('gb2312','ignore'))
-                cursor.execute(sql.encode('gb2312','ignore'))
-                print sql
-                con.commit()
-            except Exception as e:
-                logging.error(e)
+            # try:
+            #     # fp.write(sql.encode('gb2312','ignore')+'\r\n')
+            #     cursor.execute(sql.encode('gb2312','ignore'))
+            #     # print script
+            #     con.commit()
+            # except Exception as e:
+            #     logging.info(sql)
+            #     print e
         con.close()
-        fp.closed()
+        # fp.closed()
         logging.info('thread is over')
         return
 
