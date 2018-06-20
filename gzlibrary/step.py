@@ -113,10 +113,12 @@ class AnalysisBookHoldJson(base.BaseThread):
                     self.dbQueue.put(insertsql)
                 updatesql = "update GZLIBBOOKINFO set holdanalyflag='1' where id = '%s'" % (code)
                 self.dbQueue.put(updatesql)
-                logging.info('[%s] Analysis successed g' % (filepath))
+                logging.info('[%s] Analysis successed ' % (filepath))
             except Exception as e:
                 logging.error(e)
-                logging.error('[%s] Analysis failed g' % (filepath))
+                logging.error('[%s] Analysis failed  ' % (filepath))
+                updatesql = "update GZLIBBOOKINFO set holddownflag='0',holdanalyflag='0'  where id = '%s'" % (code)
+                self.dbQueue.put(updatesql)
         return
 
     @staticmethod
