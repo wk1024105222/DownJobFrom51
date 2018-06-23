@@ -5,7 +5,7 @@ import re
 from bs4 import BeautifulSoup
 from lxml import etree
 from entity import job51
-from crawler.dbpool import poolOracle
+from crawler.dbpool import pool
 
 #从页面获取职位url的正则
 #jobUrlReg = re.compile(r'href="(http://jobs\.51job\.com/.*?/\d{8}\.html)\?s=0"')
@@ -357,7 +357,7 @@ def getJobInfoFromHtmlByXpath(filename):
     return job
 
 def getListFromDB(sql):
-    con = poolOracle.connection()
+    con = pool.connection()
     cursor = con.cursor()
     cursor.execute(sql)
     try:
@@ -370,7 +370,7 @@ def getListFromDB(sql):
     return result
 
 def executDMLSql(sqls):
-    con = poolOracle.connection()
+    con = pool.connection()
     cursor = con.cursor()
     for sql in sqls:
         try:

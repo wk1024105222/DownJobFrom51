@@ -11,7 +11,7 @@ import queues
 from crawler import base
 import driver
 import util
-from crawler.dbpool import poolOracle
+from crawler.dbpool import pool
 from entity import *
 
 def createDownJobTaskQueue(outQueue):
@@ -89,7 +89,7 @@ class DownJobListPage(base.BaseThread):
 
     @staticmethod
     def fillInQueue(inQueue):
-        con = poolOracle.connection()
+        con = pool.connection()
         cursor = con.cursor()
         cursor.execute("select num,id,url, localpath from job51listpage where downflag='0' order by num")
         for listpage in cursor.fetchall():
@@ -156,7 +156,7 @@ class AnalysisJobListPage(base.BaseThread):
 
     @staticmethod
     def fillInQueue(inQueue):
-        con = poolOracle.connection()
+        con = pool.connection()
         cursor = con.cursor()
         cursor.execute("select num,id,url, localpath from job51listpage where downflag='1' and analyflag='0' order by num")
         for listpage in cursor.fetchall():
@@ -247,7 +247,7 @@ class DownJobInfoPage(base.BaseThread):
 
     @staticmethod
     def fillInQueue(inQueue):
-        con = poolOracle.connection()
+        con = pool.connection()
         cursor = con.cursor()
         cursor.execute("select code,pageid,url,localpath from job51infopage where downflag='0'")
         for infopage in cursor.fetchall():
@@ -310,7 +310,7 @@ class AnalysisJobInfoPage(base.BaseThread):
 
     @staticmethod
     def fillInQueue(inQueue):
-        con = poolOracle.connection()
+        con = pool.connection()
         cursor = con.cursor()
         cursor.execute("select code,pageid,url,localpath from job51infopage where downflag='1' and analyflag='0'")
         for infopage in cursor.fetchall():
@@ -326,7 +326,7 @@ class DBExecuter(base.BaseThread):
     数据入库
     """
     def run(self):
-        con = poolOracle.connection()
+        con = pool.connection()
         cursor = con.cursor()
         emptyNum=0
         # fp = open("allsql.script","w")

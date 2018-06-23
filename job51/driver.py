@@ -21,7 +21,7 @@ def createJobListPageToDB():
     生成所有joblist页面url
     :return:
     """
-    con = poolOracle.connection()
+    con = pool.connection()
     cursor = con.cursor()
     for i in range(1,queues.jobListPageSize,1):
         url = 'https://search.51job.com/list/000000,000000,0000,00,3,99,java,2,'+str(i)+'.html?' \

@@ -7,7 +7,7 @@ import cookielib
 import logging
 import time
 from crawler import base
-from crawler.dbpool import poolOracle
+from crawler.dbpool import pool
 from entity import *
 import json
 
@@ -59,7 +59,7 @@ class DownBookHoldJson(base.BaseThread):
 
     @staticmethod
     def fillInQueue(inQueue):
-        con = poolOracle.connection()
+        con = pool.connection()
         cursor = con.cursor()
         cursor.execute("select id from gzlibbookinfo where holddownflag='0'")
         for code in cursor.fetchall():
@@ -123,7 +123,7 @@ class AnalysisBookHoldJson(base.BaseThread):
 
     @staticmethod
     def fillInQueue(inQueue):
-        con = poolOracle.connection()
+        con = pool.connection()
         cursor = con.cursor()
         cursor.execute("select id from gzlibbookinfo where holddownflag='1' and holdanalyflag='0'")
         for code in cursor.fetchall():
@@ -139,7 +139,7 @@ class DBExecuter(base.BaseThread):
     数据入库
     """
     def run(self):
-        con = poolOracle.connection()
+        con = pool.connection()
         cursor = con.cursor()
         emptyNum=0
         # fp = open("allsql.script","w")
