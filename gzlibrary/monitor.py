@@ -2,7 +2,6 @@
 import threading
 import time
 from functools import wraps
-from crawler.dbpool import poolOracle
 
 class TaskRuntimeMonitor(threading.Thread):
     """
@@ -15,8 +14,6 @@ class TaskRuntimeMonitor(threading.Thread):
         self.allThreads = allThreads
 
     def run(self):
-        con = poolOracle.connection()
-        cursor = con.cursor()
         while True:
             liveThread = 0
             step2 = 0
@@ -39,13 +36,9 @@ class TaskRuntimeMonitor(threading.Thread):
             if liveThread == 1:
                 break
 
-            cursor.execute("select  count(*) from gzlibbookhold t")
-            details = cursor.fetchall()
-
-            print "%s\tliveTheads:%s        下载列表:%s        解析列表:%s        数据入库:%s        DB record count: %s" % \
-                  (self.taskQueues.toString(),str(liveThread) ,str(step2),str(step3),str(step4),str(details[0]))
-            time.sleep(3)
-        con.close()
+            print "%s\tliveTheads:%s        下载列表:%s        解析列表:%s        数据入库:%s" % \
+                  (self.taskQueues.toString(),str(liveThread) ,str(step2),str(step3),str(step4))
+            time.sleep(10)
         return
 
 def fn_timer(function):
