@@ -9,23 +9,11 @@ import uuid
 from stock.entity import StockPrice, StockInfo
 from stock.dbpool import pool
 
-#同花顺 不全
-source1=['http://bbs.10jqka.com.cn/codelist.html',
-         re.compile(r' <li><a href="http://bbs.10jqka.com.cn/[a-z]{2},\d{6}.*?>'
-                    r'(.*?[6,0,3]\d{5})</a></li>')]
-
-
-#东方财富网 最全
-source2=['http://quote.eastmoney.com/stocklist.html',
-         re.compile(r'<li><a target="_blank" href="http://quote.eastmoney.com/[a-z]{2}\d{6}.html">'
-                    r'(.*?)\(([6,0,3]\d{5})\)</a></li>')]
-
 logging.basicConfig(level=logging.INFO,
                 filemode='w',
                 format='%(asctime)s %(thread)d [line:%(lineno)d] [%(threadName)s] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
                 filename='log/StockUtil.log')
-
 
 def getSinaSeasonUrl(code, beginDate):
     """
@@ -62,30 +50,6 @@ def getSeasonByMonth(month):
     elif month >= 10 and month <= 12:
         season = 4
     return season
-
-def downLackPriceFromSinaBySeason(code, maxDate):
-    """
-    下载缺失数据 的html文件 保存到本地
-    :param code: 股票代码
-    :param maxDate: 数据库数据最大交易日期 下载的开始日期
-    :return:
-    """
-
-    urls = getSinaSeasonUrl(code, maxDate)
-
-    path = 'd:/fileloc/stock/'+code+'/'
-    if not os.path.exists(path):
-        os.mkdir(path)
-
-    for url in urls:
-        filename  = path+str(code)+'_'+url[-11:-7]+'_'+url[-1]+'.html'
-        if not os.path.exists(filename):
-            try:
-                urllib.urlretrieve(url,filename+'.tmp')
-                os.renames(filename+'.tmp',filename)
-
-            except Exception as e:
-                print e
 
 def getStockListeddate(code):
     """
@@ -135,53 +99,5 @@ def getPriceFromHtml(self, code,html):
         stockPrices = []
     return stockPrices
 
-def getAllStockInfoFromDB(self,type):
-    """
-    获取数据库股票信息到缓存
-    :param type: List Dict 决定了返回类型
-    :return:
-    """
-    #con = cx_Oracle.connect("wkai/wkai@127.0.0.1/wkai")
-    con = pool.connection()
-    cursor = con.cursor()
-    cursor.execute("select code, listeddate, name from STOCKINFO where listeddate is null")
-    stockInfos = cursor.fetchall()
-    con.close()
 
-    if type == 'Dict':
-        allStock = {}
-        for x in stockInfos:
-            tmp=[x[1],x[2]]
-            allStock[x[0]]=tmp
-    elif type == 'List':
-        allStock = []
-        for y in stockInfos:
-            allStock.append({'code':y[0],'listeddate':y[1],'name':y[2]})
-    else:
-        None
-    return allStock
-
-def getAllStockInfoFromWeb(self, source):
-    """
-    从网上获取最新股票列表
-    :param source: 数据源 List [url,获取code的reg]
-    :return: 股票列表
-    """
-
-    rlt=[]
-
-    url = source[0]
-    pageHtml=urllib.urlopen(url).read()
-
-    stockCodeReg = source[1]
-    stockCodes = re.findall(stockCodeReg, pageHtml)
-
-    for tmp in stockCodes:
-        if(len(tmp) == 2):
-            code = tmp[1]
-            #name = tmp[0].decode('gb2312','ignore').encode('utf8')
-            name = tmp[0]
-            rlt.append(StockInfo(code=code, name=name))
-
-    return rlt
 

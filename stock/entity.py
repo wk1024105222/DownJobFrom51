@@ -1,7 +1,4 @@
 
-from datetime import datetime
-import uuid
-
 class StockPrice:
 
     def __init__(self, id, code, txnDate, open,  high, low, close, volume):
@@ -16,8 +13,8 @@ class StockPrice:
 
     def createInsertSql(self):
         sql = "insert into STOCKDATA (ID, CODE, TXNDATE, OPEN, HIGH, LOW, CLOSE, VOLUME) " \
-              "values ('%s', '%s', to_date('%s', 'yyyy-mm-dd'), %s, %s, %s, %s, %s)" % \
-              (self.id, self.code, datetime.strftime(self.txnDate,'%Y-%m-%d'), self.open, self.high, self.low, self.close, self.volume)
+              "values ('%s', '%s', %s, %s, %s, %s, %s, %s)" % \
+              (self.id, self.code, self.txnDate, self.open, self.high, self.low, self.close, self.volume)
         return sql
 
 
