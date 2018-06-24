@@ -36,7 +36,7 @@ class DownBookHoldJson(base.BaseThread):
                 continue
 
             url = 'http://opac.gzlib.gov.cn/opac/api/holding/%s' % (code)
-            filepath = '%s/%s.json' % (holdbasepath, code)
+            filepath = '%s/%s/%s.json' % (holdbasepath,str(int(code)%100) ,code)
 
             updatesql = "update GZLIBBOOKINFO set holddownflag='1' where id = '%s'" % (code)
 
@@ -100,11 +100,18 @@ class AnalysisBookHoldJson(base.BaseThread):
                 logging.info('AnalysisBookHoldJson get null task from inQueue wait for '+str(self.emptyWait)+'s')
                 time.sleep(self.emptyWait)
                 continue
-            filepath = '%s/%s.json' % (holdbasepath, code)
+            filepath = '%s/%s/%s.json' % (holdbasepath, str(int(code) % 100), code)
+
+            if not os.path.exists(filepath):
+                updatesql = "update GZLIBBOOKINFO set holddownflag='0',holdanalyflag='0'  where id = '%s'" % (code)
+                self.dbQueue.put(updatesql)
+                logging.info('file %s not exists' % (filepath))
+                continue
 
             try:
                 f = open(filepath)
                 booklist = json.load(f)['holdingList']
+                f.close()
 
                 for book in booklist:
                     bookHold = BookHold(book['barcode'],book['callno'],book['orglib'],book['orglocal'],book['cirtype'],
@@ -115,8 +122,11 @@ class AnalysisBookHoldJson(base.BaseThread):
                 self.dbQueue.put(updatesql)
                 logging.info('[%s] Analysis successed ' % (filepath))
             except Exception as e:
+                f.close()
                 logging.error(e)
                 logging.error('[%s] Analysis failed  ' % (filepath))
+                os.renames(filepath , filepath+ ".err")
+                logging.info('rename file %s' % (filepath))
                 updatesql = "update GZLIBBOOKINFO set holddownflag='0',holdanalyflag='0'  where id = '%s'" % (code)
                 self.dbQueue.put(updatesql)
         return
