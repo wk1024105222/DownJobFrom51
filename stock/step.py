@@ -12,9 +12,15 @@ from entity import *
 
 STOCKBASEPATH = 'D:/fileloc/stock/price'
 
+'''
+创业板的代码是300打头的股票代码
+沪市A股的代码是以600、601或603打头
+深市A股的代码是以000打头
+中小板的代码是002打头
+'''
 EASTMONEY = ['http://quote.eastmoney.com/stocklist.html',
          re.compile(r'<li><a target="_blank" href="http://quote.eastmoney.com/[a-z]{2}\d{6}.html">'
-                    r'(.*?)\(([6,0,3]\d{5})\)</a></li>')]
+                    r'(.*?)\(([6,0,3]0[0-3]\d{3})\)</a></li>')]
 
 
 class GetAllListedStock(base.BaseThread):
@@ -32,12 +38,13 @@ class GetAllListedStock(base.BaseThread):
         for tmp in stockCodes:
             if (len(tmp) == 2):
                 code = tmp[1]
-                name = tmp[0]
-
+                name = tmp[0].decode('gbk').encode('utf-8')
                 if self.doneMap.has_key(code):
                     if self.doneMap[code] != name:
+                        # print name, self.doneMap[code]
                         self.dbQueue.put("update stockinfo set name ='%s' where code ='%s'" % (name, code))
                     continue
+                # print code, name
                 self.outQueue.put(code)
                 self.dbQueue.put(StockInfo(code=code, name=name).createInsertSql())
         return
@@ -90,7 +97,7 @@ class UpdateStockInfo(base.BaseThread):
             if listeddate != None:
                 sql = "update stockinfo set listeddate='%s' where code='%s'" % (listeddate,code)
                 self.dbQueue.put(sql)
-                self.outQueue.put(code)
+                self.outQueue.put((code,listeddate))
             time.sleep(self.requestWait)
         return
 
@@ -98,7 +105,7 @@ class UpdateStockInfo(base.BaseThread):
     def fillInQueue(inQueue):
         con = pool.connection()
         cursor = con.cursor()
-        cursor.execute("select code from STOCKINFO where LISTEDDATE is not null")
+        cursor.execute("select code from STOCKINFO where LISTEDDATE is null")
         for code in cursor.fetchall():
             inQueue.put(code[0])
         con.close()
@@ -150,7 +157,7 @@ class GetLackPriceHtmlUrl(base.BaseThread):
     def fillInQueue(inQueue):
         con = pool.connection()
         cursor = con.cursor()
-        cursor.execute("select code, max(txndate) from STOCKINFO group by code")
+        cursor.execute("SELECT * from (select code, max(txndate) maxdate from STOCKdata group by code) a where a.maxdate<>'%s'" % (time.strftime("%Y-%m-%d", time.localtime())))
         for stock in cursor.fetchall():
             inQueue.put(stock)
         con.close()
@@ -246,14 +253,14 @@ class AnalysisLackPriceHtml(base.BaseThread):
             filepath = task[1]
 
             if not os.path.exists(filepath):
-                os.renames(filepath, filepath + '.err')
                 logging.info('file %s not exists' % (filepath))
                 continue
 
             html = open(filepath).read()
             prices = getPriceFromHtml(html)
             if len(prices) == 0:
-                logging.info("analysisHtml error len=0")
+                os.renames(filepath, filepath + '.err')
+                logging.info("[%s]analysisHtml error len=0" % (filepath))
                 continue
 
             try:
@@ -314,8 +321,9 @@ class DBExecuter(base.BaseThread):
                 continue
 
             try:
-                cursor.execute(sql.encode('gb2312','ignore'))
+                cursor.execute(sql)
                 con.commit()
+                # print sql
             except Exception as e:
                 logging.info(sql)
                 logging.info(e)

@@ -25,4 +25,4 @@ class StockInfo:
         self.name = name
 
     def createInsertSql(self):
-        return "insert into STOCKINFO (CODE, NAME)  values ('"+self.code+"', '"+self.name+"')"
+        return "insert into STOCKINFO (CODE, NAME)  values ('%s', '%s')" % (self.code,self.name)

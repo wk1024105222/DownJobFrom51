@@ -5,15 +5,7 @@ import os
 import re
 import urllib
 import uuid
-
 from stock.entity import StockPrice, StockInfo
-from stock.dbpool import pool
-
-logging.basicConfig(level=logging.INFO,
-                filemode='w',
-                format='%(asctime)s %(thread)d [line:%(lineno)d] [%(threadName)s] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='log/StockUtil.log')
 
 def getSinaSeasonUrl(code, beginDate):
     """
