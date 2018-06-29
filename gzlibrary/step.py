@@ -125,7 +125,10 @@ class AnalysisBookHoldJson(base.BaseThread):
                 f.close()
                 logging.error(e)
                 logging.error('[%s] Analysis failed  ' % (filepath))
-                os.renames(filepath , filepath+ ".err")
+                try:
+                    os.renames(filepath , filepath+ ".err")
+                except Exception as e:
+                    print e
                 logging.info('rename file %s' % (filepath))
                 updatesql = "update GZLIBBOOKINFO set holddownflag='0',holdanalyflag='0'  where id = '%s'" % (code)
                 self.dbQueue.put(updatesql)
