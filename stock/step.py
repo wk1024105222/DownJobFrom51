@@ -145,7 +145,7 @@ class GetLackPriceHtmlUrl(base.BaseThread):
                 time.sleep(self.emptyWait)
                 continue
             code = task[0]
-            urls = getSinaSeasonUrl(task)
+            urls = getSinaSeasonUrl(task[0],task[1])
 
             for url in urls:
                 self.outQueue.put((code,url))
@@ -194,9 +194,11 @@ class DownLackPriceHtml(base.BaseThread):
             filepath = '%s/%s_%s_%s.html' % (STOCKBASEPATH,code,url[-11:-7],url[-1])
 
             #删除已存在文件 文件中可能包含不完整的季度数据
-            if not os.path.exists(filepath):
-                os.remove(filepath)
-                logging.info('exist file %s is deleted' % (filepath))
+            if os.path.exists(filepath):
+                # os.remove(filepath)
+                # logging.info('exist file %s is deleted' % (filepath))
+                logging.info('[%s] exist' % (filepath))
+                continue
 
             try:
                 urllib.urlretrieve(url,filepath+".tmp")

@@ -17,8 +17,8 @@ def getSinaSeasonUrl(code, beginDate):
     :return: urls 一个季度的日交易数据 一个页面
     """
 
-    begin_year = beginDate.year
-    begin_month = beginDate.month
+    begin_year = int(beginDate[0:4])
+    begin_month = int(beginDate[5:7])
     begin_season = getSeasonByMonth(begin_month)
 
     end_year = date.today().year
