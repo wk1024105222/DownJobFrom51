@@ -36,7 +36,7 @@ class StockTaskQueueList:
         tmp='123456'
         tmp1 = ['上市时间获取','股价URL待生成','季度股价待下载','季度股价待解析','数据待入库']
 
-        for i in range(1,5,1):
+        for i in range(0,5,1):
             rlt += tmp1[i]+':' + str(self.queues[tmp[i:i+2]].size())+'        '
         return rlt
 
